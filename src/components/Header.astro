@@ -1,40 +1,113 @@
 ---
 ---
 
-<header class="my-6">
-	<nav class="flex gap-4 text-sm text-gray-600">
-		<a href="/" class="no-underline hover:underline" data-key="h">[h] home</a>
-		<a href="/blog" class="no-underline hover:underline" data-key="b">[b] blog</a>
-		<a href="/projects" class="no-underline hover:underline" data-key="p">[p] projects</a>
+<header class="my-12">
+	<nav class="flex items-center gap-8">
+		<a
+			href="/"
+			class="nav-button text-sm transition-colors duration-200 flex items-center gap-1"
+			data-section="home"
+		>
+			[h] home
+		</a>
+		<a
+			href="/blog"
+			class="nav-button text-sm transition-colors duration-200 flex items-center gap-1"
+			data-section="blog"
+		>
+			[b] blog
+		</a>
+		<a
+			href="/projects"
+			class="nav-button text-sm transition-colors duration-200 flex items-center gap-1"
+			data-section="projects"
+		>
+			[p] projects
+		</a>
 	</nav>
 </header>
 
 <script>
-	// Navigate with keyboard shortcuts: h -> home, b -> blog, p -> projects
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const isEditable = (el) => {
-		if (!el) return false;
-		const tag = el.tagName?.toLowerCase();
-		return (
-			tag === 'input' ||
-			tag === 'textarea' ||
-			el.isContentEditable ||
-			(tag === 'select')
-		);
-	};
+	// Update active button based on current path
+	function updateActiveButton() {
+		const currentPath = window.location.pathname;
+		const pathToSection: Record<string, string> = {
+			'/': 'home',
+			'/blog': 'blog',
+			'/projects': 'projects',
+		};
+		const currentSection = pathToSection[currentPath] || 'home';
 
-	addEventListener('keydown', (e) => {
+		const buttons = document.querySelectorAll('.nav-button');
+		buttons.forEach(button => {
+			const section = button.getAttribute('data-section');
+			if (section === currentSection) {
+				button.classList.remove('text-muted-foreground', 'hover:text-foreground');
+				button.classList.add('text-foreground');
+			} else {
+				button.classList.remove('text-foreground');
+				button.classList.add('text-muted-foreground', 'hover:text-foreground');
+			}
+		});
+	}
+
+	// Apply incremental fade-in to all .animate elements
+	function applySequentialFade() {
+		const elements = document.querySelectorAll<HTMLElement>('.animate');
+		elements.forEach((el, i) => {
+			el.style.setProperty('--i', String(i + 1));
+			// Restart animation in case elements persist between transitions
+			el.style.animation = 'none';
+			void el.offsetWidth; // reflow
+			el.style.animation = '';
+		});
+	}
+
+	// Prepare stagger on the incoming document before swap
+	function applySequentialFadeForDocument(doc: Document) {
+		const elements = doc.querySelectorAll<HTMLElement>('.animate');
+		elements.forEach((el, i) => {
+			el.style.setProperty('--i', String(i + 1));
+		});
+	}
+
+	// Initialize on page load and navigation
+	document.addEventListener('DOMContentLoaded', () => {
+		updateActiveButton();
+		applySequentialFade();
+	});
+	document.addEventListener('astro:page-load', () => {
+		updateActiveButton();
+		applySequentialFade();
+	});
+
+	// Ensure stagger is ready before the new DOM is swapped in SPA navigations
+	document.addEventListener('astro:before-swap', (event: any) => {
+		applySequentialFadeForDocument(event.newDocument as Document);
+	});
+
+	// Keyboard navigation
+	document.addEventListener('keydown', (e) => {
 		if (e.defaultPrevented) return;
-		if (e.metaKey || e.ctrlKey || e.altKey) return; // avoid conflicts
-		if (isEditable(document.activeElement)) return;
+		if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+		// Check if we're in an editable element
+		const activeElement = document.activeElement;
+		const tagName = activeElement?.tagName?.toLowerCase();
+		const isEditable = tagName === 'input' ||
+						  tagName === 'textarea' ||
+						  (activeElement && 'isContentEditable' in activeElement && activeElement.isContentEditable) ||
+						  tagName === 'select';
+
+		if (isEditable) return;
+
 		const key = e.key?.toLowerCase();
-		const sel = key === 'h' ? "a[data-key='h']" : key === 'b' ? "a[data-key='b']" : key === 'p' ? "a[data-key='p']" : null;
-		if (!sel) return;
-		const link = document.querySelector(sel);
-		if (link) {
+		const keyToSection: Record<string, string> = { h: 'home', b: 'blog', p: 'projects' };
+		const section = keyToSection[key];
+		if (section) {
 			e.preventDefault();
-			// Use the link click to benefit from View Transitions navigation
-			if (link instanceof HTMLAnchorElement) link.click();
+			const link = document.querySelector<HTMLAnchorElement>(`a[data-section="${section}"]`);
+			link?.click();
 		}
 	});
 </script>
