@@ -177,6 +177,33 @@
     animation: fadeInUp 0.6s ease-out forwards;
     animation-delay: calc(var(--i, 0) * 0.08s);
   }
+
+  /* Subtle keyboard shortcut keycap shown via design on hover/focus */
+  .nav-button[aria-keyshortcuts] {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .nav-button[aria-keyshortcuts]::after {
+    content: attr(aria-keyshortcuts);
+    margin-left: 0.375rem; /* 6px */
+    font-size: 0.75rem; /* 12px */
+    line-height: 1;
+    padding: 0.125rem 0.375rem; /* 2px 6px */
+    border-radius: 0.375rem; /* 6px */
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--muted) 75%, transparent);
+    color: var(--muted-foreground);
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 120ms ease, transform 120ms ease;
+    pointer-events: none;
+  }
+  .nav-button[aria-keyshortcuts]:hover::after,
+  .nav-button[aria-keyshortcuts]:focus-visible::after {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
 }
 
 @font-face {

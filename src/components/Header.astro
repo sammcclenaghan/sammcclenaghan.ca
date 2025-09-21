@@ -5,52 +5,32 @@
 	<nav class="flex items-center gap-8">
 		<a
 			href="/"
-			class="nav-button text-sm transition-colors duration-200 flex items-center gap-1"
+			class="nav-button text-muted-foreground hover:text-blue-300 transition-colors duration-200 flex items-center gap-1 rounded-md px-1 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+			aria-keyshortcuts="h"
 			data-section="home"
 		>
-			[h] home
+			home
 		</a>
 		<a
 			href="/blog"
-			class="nav-button text-sm transition-colors duration-200 flex items-center gap-1"
+			class="nav-button text-muted-foreground hover:text-blue-300 transition-colors duration-200 flex items-center gap-1 rounded-md px-1 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+			aria-keyshortcuts="b"
 			data-section="blog"
 		>
-			[b] blog
+			blog
 		</a>
 		<a
 			href="/projects"
-			class="nav-button text-sm transition-colors duration-200 flex items-center gap-1"
+			class="nav-button text-muted-foreground hover:text-blue-300 transition-colors duration-200 flex items-center gap-1 rounded-md px-1 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+			aria-keyshortcuts="p"
 			data-section="projects"
 		>
-			[p] projects
+			projects
 		</a>
 	</nav>
 </header>
 
 <script>
-	// Update active button based on current path
-	function updateActiveButton() {
-		const currentPath = window.location.pathname;
-		const pathToSection: Record<string, string> = {
-			'/': 'home',
-			'/blog': 'blog',
-			'/projects': 'projects',
-		};
-		const currentSection = pathToSection[currentPath] || 'home';
-
-		const buttons = document.querySelectorAll('.nav-button');
-		buttons.forEach(button => {
-			const section = button.getAttribute('data-section');
-			if (section === currentSection) {
-				button.classList.remove('text-muted-foreground', 'hover:text-foreground');
-				button.classList.add('text-foreground');
-			} else {
-				button.classList.remove('text-foreground');
-				button.classList.add('text-muted-foreground', 'hover:text-foreground');
-			}
-		});
-	}
-
 	// Apply incremental fade-in to all .animate elements
 	function applySequentialFade() {
 		const elements = document.querySelectorAll<HTMLElement>('.animate');
@@ -73,11 +53,9 @@
 
 	// Initialize on page load and navigation
 	document.addEventListener('DOMContentLoaded', () => {
-		updateActiveButton();
 		applySequentialFade();
 	});
 	document.addEventListener('astro:page-load', () => {
-		updateActiveButton();
 		applySequentialFade();
 	});
 
