@@ -1,5 +1,6 @@
 ---
 import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 ---
@@ -16,7 +17,10 @@ import "../styles/global.css";
 	<body>
 		<div class="container max-w-2xl mx-auto px-6 pb-16" id="page">
 			<Header />
-			<slot />
+			<main>
+				<slot />
+			</main>
+			<Footer />
 		</div>
 	</body>
 </html>
