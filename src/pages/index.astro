@@ -1,11 +1,46 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<Welcome />
+	<main class="leading-7">
+		<h1 class="text-4xl font-semibold mb-4">Sam McClenaghan</h1>
+		<p class="mb-3">
+			<strong>Building things and solving problems.</strong> I'm a 20 y/o CS undergrad student who
+			loves language design, theoretical computer science and living on the terminal. If I'm not
+			coding, I'm probably doing cardistry, watching movies or obsessing over mechanical keyboards.
+		</p>
+		<p class="text-gray-500 mb-7">
+			In the past I've developed AI-native email clients and workflow automation tools.
+		</p>
+
+		<section class="mt-8 mb-10">
+			<h2 class="text-base font-semibold text-gray-900 mb-3"><span class="text-blue-600 mr-1.5">*</span> work</h2>
+			<div class="my-4">
+				<div class="font-semibold">mocha</div>
+				<div class="text-gray-500 text-sm">co-founder and cto (jul 2025 - present)</div>
+				<p class="text-gray-600 mt-1.5">building an ai native email client designed for speed and ease of use</p>
+			</div>
+			<div class="my-4">
+				<div class="font-semibold">ENS labs</div>
+				<div class="text-gray-500 text-sm">software engineer (feb 2025 - jul 2025)</div>
+				<p class="text-gray-600 mt-1.5">helped migrate ensjs to namochain and optimized ci for the manager app</p>
+			</div>
+			<div class="my-4">
+				<div class="font-semibold">leapflow</div>
+				<div class="text-gray-500 text-sm">co-founder and cto (may 2024 - jun 2025)</div>
+				<p class="text-gray-600 mt-1.5">headed engineering to develop ai agents that automate repetitive workflows in existing software</p>
+			</div>
+			<div class="my-4">
+				<div class="font-semibold">dimension</div>
+				<div class="text-gray-500 text-sm">software engineer (jan 2024 - may 2024)</div>
+				<p class="text-gray-600 mt-1.5">developed scalable backend systems and user interfaces</p>
+			</div>
+		</section>
+
+		<section class="mt-8 mb-10">
+			<h2 class="text-base font-semibold text-gray-900 mb-3"><span class="text-blue-600 mr-1.5">*</span> projects</h2>
+			<p class="text-gray-500">A selection of personal projects is on the projects page.</p>
+		</section>
+	</main>
 </Layout>

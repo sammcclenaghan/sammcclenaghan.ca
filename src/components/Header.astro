@@ -1,0 +1,42 @@
+---
+---
+
+<header class="my-6">
+	<nav class="flex gap-4 text-sm text-gray-600">
+		<a href="/" class="no-underline hover:underline" data-key="h">[h] home</a>
+		<a href="/blog" class="no-underline hover:underline" data-key="b">[b] blog</a>
+		<a href="/projects" class="no-underline hover:underline" data-key="p">[p] projects</a>
+	</nav>
+</header>
+
+<script>
+	// Navigate with keyboard shortcuts: h -> home, b -> blog, p -> projects
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const isEditable = (el) => {
+		if (!el) return false;
+		const tag = el.tagName?.toLowerCase();
+		return (
+			tag === 'input' ||
+			tag === 'textarea' ||
+			el.isContentEditable ||
+			(tag === 'select')
+		);
+	};
+
+	addEventListener('keydown', (e) => {
+		if (e.defaultPrevented) return;
+		if (e.metaKey || e.ctrlKey || e.altKey) return; // avoid conflicts
+		if (isEditable(document.activeElement)) return;
+		const key = e.key?.toLowerCase();
+		const sel = key === 'h' ? "a[data-key='h']" : key === 'b' ? "a[data-key='b']" : key === 'p' ? "a[data-key='p']" : null;
+		if (!sel) return;
+		const link = document.querySelector(sel);
+		if (link) {
+			e.preventDefault();
+			// Use the link click to benefit from View Transitions navigation
+			if (link instanceof HTMLAnchorElement) link.click();
+		}
+	});
+</script>
+
+
