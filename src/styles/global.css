@@ -116,6 +116,10 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme {
+    --font-soehne: "Soehne", sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -173,6 +177,14 @@
     animation: fadeInUp 0.6s ease-out forwards;
     animation-delay: calc(var(--i, 0) * 0.08s);
   }
+}
+
+@font-face {
+  font-family: Soehne;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/fonts/soehne-buch.woff2") format("woff2");
 }
 
 @keyframes fadeInUp {
