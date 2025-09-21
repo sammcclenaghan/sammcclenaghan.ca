@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Link from '../components/Link.astro';
 ---
 
 <Layout>
@@ -8,14 +9,18 @@ import Layout from '../layouts/Layout.astro';
 			<h1 class="font-medium text-3xl">Sam McClenaghan</h1>
 		</div>
 
-		<div class="space-y-4 animate">
-			<p class="leading-relaxed">
-				<em>Building things and solving problems.</em> I'm a 20 y/o CS undergrad student who
-				loves language design, theoretical computer science and living on the terminal. If I'm not
-				coding, I'm probably doing cardistry, watching movies or obsessing over mechanical keyboards.
-			</p>
-			<p class="leading-relaxed">
-				In the past I've developed AI-native email clients and workflow automation tools.
+		<div class="space-y-4">
+			<p class="animate leading-relaxed">
+                I am a Software Developer Intern at
+                <Link href="https://leanpub.com/" aria-label="Leanpub" external>
+                    Leanpub
+                </Link>, where I am helping build publishing tools and
+                modernizing the infrastructure in preparation for Leanpub V3.
+                I am also pursuing a degree in Computer Science at the University
+                of Victoria.
+            </p>
+			<p class="animate leading-relaxed">
+				I spend most of my time building terminal tools and web apps, along with learning new languages and frameworks, gradually diving into core backend systems.
 			</p>
 		</div>
 
@@ -27,34 +32,18 @@ import Layout from '../layouts/Layout.astro';
 
 			<div class="space-y-6">
 				<div class="space-y-2 animate">
-					<h3 class="font-medium">mocha</h3>
-					<p class="text-sm text-muted-foreground">co-founder and cto (jul 2025 - present)</p>
+					<h3 class="font-medium">Trustscience</h3>
+					<p class="text-sm text-muted-foreground">software engineer intern (nov 2022 - aug 2024 summers)</p>
 					<p class="text-sm text-muted-foreground leading-relaxed">
-						building an ai native email client designed for speed and ease of use
+						Built and enhanced financial integration workflows for client onboarding using Vue.js and AWS Lambda.
 					</p>
 				</div>
 
 				<div class="space-y-2 animate">
-					<h3 class="font-medium">ENS labs</h3>
-					<p class="text-sm text-muted-foreground">software engineer (feb 2025 - jul 2025)</p>
+					<h3 class="font-medium">Leanpub</h3>
+					<p class="text-sm text-muted-foreground">software engineer intern (apr 2025 - dec 2025)</p>
 					<p class="text-sm text-muted-foreground leading-relaxed">
-						helped migrate ensjs to namochain and optimized ci for the manager app
-					</p>
-				</div>
-
-				<div class="space-y-2 animate">
-					<h3 class="font-medium">leapflow</h3>
-					<p class="text-sm text-muted-foreground">co-founder and cto (may 2024 - jun 2025)</p>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						headed engineering to develop ai agents that automate repetitive workflows in existing software
-					</p>
-				</div>
-
-				<div class="space-y-2 animate">
-					<h3 class="font-medium">dimension</h3>
-					<p class="text-sm text-muted-foreground">software engineer (jan 2024 - may 2024)</p>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						developed scalable backend systems and user interfaces
+						Developed and maintained features for Leanpub’s publishing platform, improving author and reader workflows with Ruby on Rails and React.
 					</p>
 				</div>
 			</div>
@@ -69,7 +58,7 @@ import Layout from '../layouts/Layout.astro';
 			<div class="space-y-6">
 				<div class="space-y-2 animate group cursor-pointer">
 					<h3 class="font-medium flex items-center gap-2">
-						terminal-config
+						photograph	
 						<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
 						</svg>
@@ -81,7 +70,7 @@ import Layout from '../layouts/Layout.astro';
 
 				<div class="space-y-2 animate group cursor-pointer">
 					<h3 class="font-medium flex items-center gap-2">
-						cardistry-trainer
+						vikes scraper
 						<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
 						</svg>
@@ -93,7 +82,7 @@ import Layout from '../layouts/Layout.astro';
 
 				<div class="space-y-2 animate group cursor-pointer">
 					<h3 class="font-medium flex items-center gap-2">
-						lang-experiments
+						text adventure
 						<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
 						</svg>
