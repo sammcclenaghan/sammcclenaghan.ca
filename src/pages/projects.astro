@@ -1,16 +1,63 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Link from '../components/Link.astro';
 ---
 
 <Layout>
 	<div class="space-y-8">
 		<div class="space-y-4 animate">
 			<h1 class="font-medium text-3xl">Projects</h1>
-			<p class="leading-relaxed">
-				Coming soon — a curated list of projects.
+			<p class="leading-relaxed text-muted-foreground">
+				selected work and tinkering
 			</p>
 		</div>
+
+		<div class="space-y-4 pt-2">
+			<div class="space-y-6">
+				<div class="space-y-2 animate group">
+					<Link href="https://github.com/sammcclenaghan/photograph" external={true}>
+						<h3 class="font-medium flex items-center gap-2">
+							photograph
+							<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
+							</svg>
+						</h3>
+					</Link>
+					<p class="text-sm text-muted-foreground leading-relaxed">
+						my personal terminal configuration and dotfiles for optimal development workflow
+					</p>
+				</div>
+
+				<div class="space-y-2 animate group">
+					<Link href="https://github.com/sammcclenaghan/vikes-scraper" external={true}>
+						<h3 class="font-medium flex items-center gap-2">
+							vikes scraper
+							<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
+							</svg>
+						</h3>
+					</Link>
+					<p class="text-sm text-muted-foreground leading-relaxed">
+						web app for practicing cardistry moves with timer and progress tracking
+					</p>
+				</div>
+
+				<div class="space-y-2 animate group">
+					<Link href="https://github.com/sammcclenaghan/text-adventure" external={true}>
+						<h3 class="font-medium flex items-center gap-2">
+							text adventure
+							<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
+							</svg>
+						</h3>
+					</Link>
+					<p class="text-sm text-muted-foreground leading-relaxed">
+						collection of programming language design experiments and interpreters
+					</p>
+				</div>
+			</div>
+		</div>
 	</div>
+
+
 </Layout>
-
-
