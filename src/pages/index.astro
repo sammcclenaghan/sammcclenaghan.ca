@@ -1,125 +1,186 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Link from '../components/Link.astro';
+import Layout from "../layouts/Layout.astro";
+import Link from "../components/Link.astro";
 ---
 
 <Layout>
-	<div class="space-y-8">
-		<div class="space-y-4 animate">
-			<h1 class="font-medium text-3xl">Sam McClenaghan</h1>
-		</div>
+  <div class="space-y-8">
+    <div class="space-y-4 animate">
+      <h1 class="font-medium text-3xl">Sam McClenaghan</h1>
+    </div>
 
-		<div class="space-y-4">
-			<p class="animate leading-relaxed">
-                I am a Software Developer Intern at
-                <Link href="https://leanpub.com/" aria-label="Leanpub" external>
-                    Leanpub
-                </Link>, where I am helping build publishing tools and
-                modernizing the infrastructure in preparation for Leanpub V3.
-                I am also pursuing a degree in Computer Science at the University
-                of Victoria.
-            </p>
-			<p class="animate leading-relaxed">
-				I spend most of my time building terminal tools and web apps, along with learning new languages and frameworks, gradually diving into core backend systems.
-			</p>
-		</div>
+    <div class="space-y-4">
+      <p class="animate leading-relaxed">
+        I am a Software Developer Intern at
+        <Link href="https://leanpub.com/" aria-label="Leanpub" external>
+          Leanpub
+        </Link>, where I am helping build publishing tools and modernizing the
+        infrastructure in preparation for Leanpub V3. I am also pursuing a
+        degree in Computer Science at the University of Victoria.
+      </p>
+      <p class="animate leading-relaxed">
+        I spend most of my time building terminal tools and web apps, along with
+        learning new languages and frameworks, gradually diving into core
+        backend systems.
+      </p>
+    </div>
 
-		<div class="space-y-4 pt-8 animate">
-			<div class="flex items-center gap-2">
-				<span class="text-blue-400 text-2xl dark:text-blue-300">*</span>
-				<h2 class="text-lg font-medium">work</h2>
-			</div>
+    <div class="space-y-4 pt-8 animate">
+      <div class="flex items-center gap-2">
+        <span class="text-blue-400 text-2xl dark:text-blue-300">*</span>
+        <h2 class="text-lg font-medium">work</h2>
+      </div>
 
-			<div class="space-y-6">
-				<div class="space-y-2 animate">
-					<h3 class="font-medium">Leanpub</h3>
-					<p class="text-sm text-muted-foreground">software engineer intern (apr 2025 - dec 2025)</p>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						developed and maintained features for Leanpub’s publishing platform, improving author and reader workflows with Ruby on Rails and React.
-					</p>
-				</div>
-				<div class="space-y-2 animate">
-					<h3 class="font-medium">Trustscience</h3>
-					<p class="text-sm text-muted-foreground">software engineer intern (nov 2022 - aug 2024 summers)</p>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						built and enhanced financial integration workflows for client onboarding using Vue.js and AWS Lambda.
-					</p>
-				</div>
-			</div>
-		</div>
+      <div class="space-y-6">
+        <div class="space-y-2 animate">
+          <h3 class="font-medium">Leanpub</h3>
+          <p class="text-sm text-muted-foreground">
+            Full Stack Developer Intern (Jul 2025 - present)
+          </p>
+          <p class="text-sm leading-relaxed">
+            Developed and maintained features for Leanpub’s publishing platform,
+            improving author and reader workflows with Ruby on Rails and React.
+          </p>
+        </div>
+        <div class="space-y-2 animate">
+          <h3 class="font-medium">TrustScience</h3>
+          <p class="text-sm text-muted-foreground">
+            Software Engineer Intern (Nov 2022 - Aug 2024)
+          </p>
+          <p class="text-sm leading-relaxed">
+            Built and enhanced financial integration workflows for client
+            onboarding using Vue.js and AWS Lambda.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-		<div class="space-y-4 pt-8 animate">
-			<div class="flex items-center gap-2">
-				<span class="text-blue-400 text-2xl dark:text-blue-300">*</span>
-				<h2 class="text-lg font-medium">projects</h2>
-			</div>
+  <div class="space-y-4 pt-8 animate">
+    <div class="flex items-center gap-2">
+      <span class="text-blue-400 text-2xl dark:text-blue-300">*</span>
+      <h2 class="text-lg font-medium">projects</h2>
+    </div>
 
-			<div class="space-y-6">
-				<div class="space-y-2 animate group cursor-pointer">
-					<Link href="https://github.com/sammcclenaghan/photograph" external={true}>
-						<h3 class="font-medium flex items-center gap-2">
-							photograph
-							<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
-							</svg>
-						</h3>
-					</Link>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						a photography portfolio and gallery app built with next.js, react and postgresql.
-					</p>
-				</div>
+    <div class="space-y-6">
+      <div class="space-y-2 animate group cursor-pointer">
+        <Link
+          href="https://github.com/sammcclenaghan/photograph"
+          external={true}
+        >
+          <h3 class="font-medium flex items-center gap-2">
+            photograph
+            <svg
+              class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 17L17 7M17 7H7M17 7V17"></path>
+            </svg>
+          </h3>
+        </Link>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          a photography portfolio and gallery app built with next.js, react and
+          postgresql.
+        </p>
+      </div>
 
-				<div class="space-y-2 animate group cursor-pointer">
-					<Link href="https://github.com/sammcclenaghan/vikes-scraper" external={true}>
-						<h3 class="font-medium flex items-center gap-2">
-							vikes scraper
-							<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
-							</svg>
-						</h3>
-					</Link>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						a cli tool that scrapes university of victoria's class data and provides an interface for searching and filtering classes
-					</p>
-				</div>
+      <div class="space-y-2 animate group cursor-pointer">
+        <Link
+          href="https://github.com/sammcclenaghan/vikes-scraper"
+          external={true}
+        >
+          <h3 class="font-medium flex items-center gap-2">
+            vikes scraper
+            <svg
+              class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 17L17 7M17 7H7M17 7V17"></path>
+            </svg>
+          </h3>
+        </Link>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          a cli tool that scrapes university of victoria's class data and
+          provides an interface for searching and filtering classes
+        </p>
+      </div>
 
-				<div class="space-y-2 animate group cursor-pointer">
-					<Link href="https://github.com/sammcclenaghan/text-adventure" external={true}>
-						<h3 class="font-medium flex items-center gap-2">
-							text adventure
-							<svg class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"></path>
-							</svg>
-						</h3>
-					</Link>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						a classic text-based adventure game implemented in java.
-					</p>
-				</div>
-			</div>
-		</div>
+      <div class="space-y-2 animate group cursor-pointer">
+        <Link
+          href="https://github.com/sammcclenaghan/text-adventure"
+          external={true}
+        >
+          <h3 class="font-medium flex items-center gap-2">
+            text adventure
+            <svg
+              class="w-3 h-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 17L17 7M17 7H7M17 7V17"></path>
+            </svg>
+          </h3>
+        </Link>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          a classic text-based adventure game implemented in java.
+        </p>
+      </div>
+    </div>
+  </div>
 
-		<div class="space-y-4 pt-8 animate">
-			<div class="flex items-center gap-2">
-				<span class="text-blue-400 text-2xl dark:text-blue-300">*</span>
-				<h2 class="text-lg font-medium">connect</h2>
-			</div>
-			<div class="flex flex-row gap-2">
-				<a href="mailto:sam@aream.ca" class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
-					email
-				</a>
-				<a href="https://github.com/sammcclenaghan" target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
-					github
-				</a>
-				<a href="https://twitter.com/samcclenaghan" target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
-					twitter
-				</a>
-				<a href="https://www.linkedin.com/in/sam-mcclenaghan" target="_blank" rel="noopener noreferrer" class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
-					linkedin
-				</a>
-			</div>
-		</div>
-	</div>
-
-
+  <div class="space-y-4 pt-8 animate">
+    <div class="flex items-center gap-2">
+      <span class="text-blue-400 text-2xl dark:text-blue-300">*</span>
+      <h2 class="text-lg font-medium">connect</h2>
+    </div>
+    <div class="flex flex-row gap-2">
+      <a
+        href="mailto:sam@aream.ca"
+        class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+      >
+        email
+      </a>
+      <a
+        href="https://github.com/sammcclenaghan"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+      >
+        github
+      </a>
+      <a
+        href="https://twitter.com/samcclenaghan"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+      >
+        twitter
+      </a>
+      <a
+        href="https://www.linkedin.com/in/sam-mcclenaghan"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+      >
+        linkedin
+      </a>
+    </div>
+  </div>
 </Layout>
