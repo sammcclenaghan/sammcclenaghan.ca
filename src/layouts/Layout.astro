@@ -30,6 +30,16 @@ const siteName = "Sam McClenaghan";
 const pageTitle = title ? `${title} — ${siteName}` : siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
+// The name is the page's heading on the index, where nothing else outranks it,
+// and a plain span on a post, where the article title is the h1. Rendering it
+// as an h2 everywhere left the index with no h1 at all and made every post's
+// outline open at h2 and then jump backwards to h1.
+const Masthead = title ? "span" : "h1";
+
+// Absolute, and it has to be: every scraper requires a fully-qualified URL for
+// og:image and silently shows nothing for a root-relative one.
+const ogImage = new URL("og.png", Astro.site);
+
 // No nav. One page has nowhere to navigate to, and everything that isn't
 // this page is off-site — which belongs at the bottom, after the content,
 // not above it competing for the first thing you see.
@@ -84,10 +94,26 @@ const links = [
     />
     {math && <link rel="stylesheet" href="/katex.min.css" />}
 
+    <!-- Without og:image every share — LinkedIn, Slack, iMessage, Twitter —
+         renders as a bare text row with no card, which reads as a broken link
+         rather than a restrained one. The card is the site's own dark mode: blue
+         label block, rail, real Geist. Source kept at src/og-card.html; re-render
+         with the command in that file's comment if the name or line changes.
+         summary_large_image is what makes Twitter use the wide card instead of
+         cropping to a small square thumbnail. -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${siteName} — ${canonical.host}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!-- The only script on the site. Runs before paint so there's no flash of
          the wrong theme.
@@ -133,9 +159,11 @@ const links = [
       >
         <span aria-hidden="true"></span>
         <a href="/" class="block w-fit">
-          <h2 class="text-2xl font-semibold leading-tight tracking-[-0.02em]">
+          <Masthead
+            class="block text-2xl font-semibold leading-tight tracking-[-0.02em]"
+          >
             Sam McClenaghan
-          </h2>
+          </Masthead>
         </a>
       </header>
 
