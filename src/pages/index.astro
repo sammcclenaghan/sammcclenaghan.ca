@@ -22,9 +22,6 @@ const work = [
 ---
 
 <Layout>
-  <!-- TODO(sam): your words. Three short sentences at most — the page is
-       dense now, and a long paragraph fights it. This is still my draft and
-       it's the last borrowed thing on the site. -->
   <!-- Below the rule, not above it: the name is the masthead and the rule
        closes it, so the description reads as the first piece of content rather
        than part of the letterhead.
@@ -33,17 +30,33 @@ const work = [
        sat at 40/56 before, near-symmetrical, which grouped it with nothing.
        Done here rather than on main's padding because posts need that value
        to stay at --head-gap: the rail stroke segments measure against it. -->
-  <section class="rail -mt-4 pb-14">
-    <span aria-hidden="true"></span>
-    <div class="max-w-[34rem] space-y-3 leading-[1.6]">
-      <p>
-        Computer science at the University of Victoria. Currently building
-        backend systems at Vertical City.
-      </p>
-      <p>
-        I write about things I've built and what building them taught me.
-        Looking for a software internship for summer 2027.
-      </p>
+  <!-- Labelled like every other section. It was the one block on the page with
+       an empty gutter cell, on a page where the gutter always carries a marker
+       — so it read as an orphan regardless of its size. With a label the index
+       is four consistent sections: now / writing / projects / work. -->
+  <section id="about" class="-mt-4 space-y-2 pb-14">
+    <div class="rail">
+      <h2 class="meta rail-label">now</h2>
+      <span aria-hidden="true"></span>
+    </div>
+
+    <!-- Body size and body leading, inherited — no overrides. Now that the
+         section carries a label like every other one, it doesn't need type
+         size to mark itself out as different. -->
+    <div class="rail">
+      <span aria-hidden="true"></span>
+      <div class="max-w-[34rem] space-y-3">
+        <p>
+          I'm a computer science student at the University of Victoria,
+          currently a software developer intern at Vertical City, where I write
+          Ruby that handles billions of requests.
+        </p>
+        <p>
+          I like building things that make complicated processes easier for
+          people.
+        </p>
+        <p>Looking for a software internship for summer 2027.</p>
+      </div>
     </div>
   </section>
 
