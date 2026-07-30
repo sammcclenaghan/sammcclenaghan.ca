@@ -1,7 +1,23 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Self-hosted, subset to latin, variable weight — two files, ~52KB total,
+   preloaded in the layout. No network font request, no FOIT. */
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/geist-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --bg1: #fff;
@@ -11,20 +27,15 @@
   --tx2: hsl(32 8% 38%);
   --tx3: hsl(32 6% 55%);
   --ui1: hsl(38 12% 88%);
-  --ui2: hsl(38 10% 82%);
+  /* Link accent. blue-300 is unreadable on white (~1.75:1), so light mode
+     gets blue-500 and dark mode gets the blue-300 you actually wanted. */
   --accent: #3b82f6;
-  --prose-body: hsl(30 10% 24%);
-}
-
-/* Two easings for the whole site: --ease-out for almost everything,
-   --ease-out-expo for overlays that need a faster arrival. Living in
-   @theme, they also become the `ease-out` utility and the default
-   timing function of every `transition-*` utility — so Tailwind
-   transitions ride the same curves as handwritten CSS. */
-@theme {
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  /* The rail colour, used for 12px dates and for the solid label blocks.
+     blue-500 is only 3.68:1 on white, which is under the bar for small text,
+     so light mode steps to blue-600 (4.6:1). Dark mode gets the blue-300 you
+     actually wanted, which is 9:1 on #121212. */
+  --rail-accent: #2563eb;
+  --rail-on-accent: #fff;
 }
 
 .dark {
@@ -35,58 +46,74 @@
   --tx2: hsl(36 10% 70%);
   --tx3: hsl(36 8% 56%);
   --ui1: hsl(30 4% 22%);
-  --ui2: hsl(30 5% 28%);
   --accent: #93c5fd;
-  --prose-body: hsl(36 8% 82%);
+  --rail-accent: #93c5fd;
+  --rail-on-accent: #121212;
+}
+
+/* Halation: at 96% lightness on #121212 the contrast is so extreme that glyph
+   edges bloom into the background and small text reads as if it's vibrating.
+   Backing the body text down to 90% kills the glow and still leaves ~15:1,
+   which is three times the 4.5:1 requirement — so this costs no legibility.
+   Only --tx1 moves; the muted tones were never bright enough to bloom. */
+.dark {
+  --tx1: hsl(40 10% 90%);
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  --color-background: var(--bg1);
-  --color-foreground: var(--tx1);
-  --color-secondary: var(--bg2);
-  --color-muted-foreground: var(--tx2);
-  --color-border: var(--ui1);
-  --color-tx3: var(--tx3);
-  --color-accent: var(--accent);
-  /* Type scale — one ladder for the whole site:
-     name 36 / page title 24 / section 18 / item title 15 / body 14 / meta 13 */
-  --text-item: 0.9375rem;
-  --text-item--line-height: 1.5;
-}
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-/* Dark mode Shiki */
-.dark .astro-code,
-.dark .astro-code span {
-  color: var(--shiki-dark) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
+  --color-bg: var(--bg1);
+  --color-bg2: var(--bg2);
+  --color-bg3: var(--bg3);
+  --color-tx1: var(--tx1);
+  --color-tx2: var(--tx2);
+  --color-tx3: var(--tx3);
+  --color-ui1: var(--ui1);
+  --color-accent: var(--accent);
+  --color-rail-accent: var(--rail-accent);
+
+  /* Flat scale. Two sizes on the index — that's the whole ladder.
+     Hierarchy comes from weight and from which rail you're in. */
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.55;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.5;
+
+  /* The gutter width, referenced by every row on the page. */
+  --spacing-gutter: 4rem;
+
+  --radius-none: 0px;
 }
-.dark .astro-code { background-color: var(--bg2) !important; }
-.dark .astro-code span { background-color: transparent !important; }
 
 @layer base {
-  * { @apply border-border; }
+  /* Static, on purpose. This is a policy, not an oversight: the design
+     decision was no motion, and stating it once here means no stray
+     hover transition can creep back in later.
+
+     Nothing on the site is exempt. */
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
+    /* No smooth scroll — anchors jump. */
+    scroll-behavior: auto;
   }
-  @media (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-behavior: smooth;
-    }
-  }
-  /* One focus ring everywhere — accent, offset, no per-element variants */
-  :focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+
   body {
-    @apply bg-background text-foreground font-sans;
+    background: var(--bg1);
+    color: var(--tx1);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
     font-feature-settings: "kern", "liga", "calt";
     font-synthesis-weight: none;
     letter-spacing: -0.003em;
@@ -96,531 +123,320 @@
     letter-spacing: 0;
   }
 
+  /* One focus ring, square like everything else. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   ::selection {
-    background-color: color-mix(in oklab, var(--accent) 28%, transparent);
-    color: var(--tx1);
+    background: var(--accent);
+    color: var(--bg1);
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    text-wrap: balance;
-    font-feature-settings: "kern", "liga", "calt";
-    letter-spacing: -0.018em;
-    line-height: 1.25;
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
-  p {
-    text-wrap: pretty;
+  /* Hover turns a link the accent colour, instantly, no easing.
+     Deliberately NOT applied to the index rows: a title going blue on hover
+     put accent text a few pixels from the accent date in the rail, and two
+     blues that close together read as a mistake. Only the footer links and
+     the back link opt in, via data-link. */
+  @media (hover: hover) {
+    a[data-link]:hover {
+      color: var(--accent);
+    }
   }
 
-  code, pre, .font-mono {
+  code,
+  pre,
+  .font-mono {
     font-feature-settings: "kern", "calt", "zero", "ss01";
   }
-
-  .animate {
-    @apply opacity-0 translate-y-3;
-    animation: fadeInUp 0.35s var(--ease-out) forwards;
-    /* Stagger reads as a cascade for the first few items; past ~0.45s it
-       reads as the page being slow — late elements arrive together */
-    animation-delay: min(calc(var(--i, 0) * 0.07s), 0.45s);
-  }
-
-  /* Writing pages are static: content should just be there, no entrance.
-     Layout sets data-static; same neutralization as reduced motion. */
-  [data-static] .animate {
-    opacity: 1;
-    transform: none;
-    animation: none;
-  }
-
-  /* Floating translucent bar. Shadow layers are mixed from the text color,
-     so they read as ink in light mode and as broadcast light in dark mode —
-     one rule covers both themes. One static state, on purpose. */
-  .nav-pill {
-    position: relative;
-    min-height: 3rem;
-    border: 0.5px solid color-mix(in oklab, var(--tx1) 12%, var(--bg1));
-    border-radius: 9999px;
-    background: color-mix(in oklab, var(--bg1) 65%, transparent);
-    backdrop-filter: blur(16px);
-    box-shadow:
-      0 1px 0 0 color-mix(in oklab, var(--bg1) 70%, transparent) inset,
-      0 2px 4px color-mix(in oklab, var(--tx1) 5%, transparent),
-      0 8px 24px color-mix(in oklab, var(--tx1) 7%, transparent);
-  }
-  /* Nav items: hover simply brightens the text; pressing compresses it */
-  .nav-button {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    transition:
-      color 200ms var(--ease-out),
-      transform 150ms var(--ease-out);
-  }
-  .nav-button:active {
-    transform: scale(0.96);
-  }
-
-  /* The dot is a plain accent circle that links home. Its one indulgence
-     is press physics: it squashes while held and springs back on release
-     (header.js drives the classes). The quicker transition matches every
-     other pressed control. */
-  #nav-dot > span {
-    background: var(--accent);
-    transition: transform 300ms var(--ease-out);
-  }
-  #nav-dot.dot-pressed > span {
-    transform: scaleX(1.12) scaleY(0.82);
-    transition-duration: 150ms;
-  }
-  .dot-release > span {
-    animation: dot-release 350ms var(--ease-out);
-  }
-  /* Clicking home while already home: a small "we're already here" —
-     one squash, a glance to each side, done */
-  .dot-shrug > span {
-    animation: dot-shrug 500ms var(--ease-out);
-  }
-  /* The underline marks the page you're on — and slides there when you navigate */
-  .nav-underline {
-    position: absolute;
-    left: 0.5rem;
-    right: 0.5rem;
-    bottom: 0.25rem;
-    height: 2px;
-    border-radius: 9999px;
-    background: var(--accent);
-    view-transition-name: nav-underline;
-  }
 }
 
-::view-transition-group(nav-underline) {
-  animation-duration: 350ms;
-  animation-timing-function: var(--ease-out);
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes dot-release {
-  0% {
-    transform: scaleX(1.12) scaleY(0.82);
-  }
-  40% {
-    transform: scaleX(0.92) scaleY(1.14);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes dot-shrug {
-  0% {
-    transform: scale(1);
-  }
-  15% {
-    transform: scaleX(1.15) scaleY(0.85);
-  }
-  35% {
-    transform: translateX(-3px);
-  }
-  55% {
-    transform: translateX(3px);
-  }
-  75% {
-    transform: translateX(-1px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate {
-    opacity: 1;
-    transform: none;
-    animation: none;
-  }
-
-  .dot-release > span,
-  .dot-shrug > span {
-    animation: none;
-  }
-}
-
-/* Ambient accent glow, shared by every page */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(40rem 20rem at 10% -5%, color-mix(in oklab, var(--accent) 6%, transparent), transparent 70%);
-  opacity: 0.85;
-}
-
-/* Metadata voice — dates and small labels are always mono, muted, tabular */
+/* The metadata voice — everything that lives in the left rail. */
 .meta {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: var(--text-meta);
+  line-height: 1.5;
   color: var(--tx3);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
-  transition: color 200ms var(--ease-out);
 }
 
-/* Hovering a row warms its date one step alongside the title. Gated to
-   devices that actually hover, so taps on touch screens don't leave rows
-   stuck in their hover state (matching how Tailwind gates hover:) */
-@media (hover: hover) {
-  .group:hover .meta {
-    color: var(--tx2);
-  }
-}
-/* Quiet mono link — "all writing →", back links */
-.quiet-link {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  color: var(--tx3);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  transition: color 200ms var(--ease-out);
+/* The colour lives in the rail. Dates run blue down the full height of every
+   page, so blue is present wherever you scroll without a single element being
+   added — and it's the structural spine that's carrying it, not decoration
+   sitting on top of the layout. */
+.rail-date {
+  color: var(--rail-accent);
 }
 
-.quiet-link .quiet-arrow {
-  display: inline-block;
-  transition: transform 200ms var(--ease-out);
-}
+/* Inline links in body copy. Deliberately NOT the accent colour: blue belongs
+   to the rail, and a blue link in the NOW paragraph would sit 40px under the
+   blue NOW label — the same two-blues-together problem that took hover
+   highlighting off the index rows.
+   So the affordance is a rule instead, which is the vocabulary this page is
+   already built from: the hairline under the masthead, the stroke down the
+   rail, the border on a table cell. A link is one more 1px line.
+   Colour is --tx3, not --ui1: --ui1 is for structure you shouldn't notice,
+   and a link has to be findable. Hover takes it to full text colour, which is
+   the only state change on the page and costs nothing since it's a colour.
 
-.quiet-link .quiet-arrow-back {
-  display: inline-block;
-  transition: transform 200ms var(--ease-out);
-}
-
-@media (hover: hover) {
-  .quiet-link:hover {
-    color: var(--accent);
-  }
-
-  .quiet-link:hover .quiet-arrow {
-    transform: translateX(2px);
-  }
-
-  .quiet-link:hover .quiet-arrow-back {
-    transform: translateX(-2px);
-  }
-}
-
-/* Footer voice — quiet links whose accent underline fades in on hover,
-   echoing how prose links underline. Press compresses, like every control. */
-.footer-link {
+   One rule for both surfaces. A link in a post used to be accent blue while a
+   link on the index was underlined, so the same object looked like two
+   different things depending on which page you were on. Now no link anywhere
+   on the site rests in blue — the only blue left outside the rail is the
+   transient hover on footer and back links, which opt in via [data-link].
+   Underline-only is also the accessible choice: the affordance is never
+   carried by colour alone. */
+.link,
+.prose a {
   text-decoration: underline;
-  text-decoration-color: transparent;
   text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  transition:
-    color 200ms var(--ease-out),
-    text-decoration-color 200ms var(--ease-out);
+  text-decoration-color: var(--tx3);
+  text-underline-offset: 3px;
 }
 
 @media (hover: hover) {
-  .footer-link:hover {
-    text-decoration-color: color-mix(in oklab, var(--accent) 60%, transparent);
+  .link:hover,
+  .prose a:hover {
+    text-decoration-color: var(--tx1);
   }
 }
 
-/* Invisible extension of small controls to a ~44px touch target */
-.touch-target {
-  position: relative;
+/* One row of the index. The padding gives the hover fill room to breathe and
+   the matching negative margin cancels it, so the rail still lines up exactly
+   with the section label above it.
+   Only anchors get the fill — the work rows aren't links, and highlighting
+   something you can't click is a lie. */
+.row {
+  padding: 0.375rem 0.5rem;
+  /* Inline only. A negative *vertical* margin here silently wins against
+     Tailwind's space-y utilities — they're wrapped in :where(), so their
+     specificity is 0 — and the row gaps collapse. Vertical rhythm stays with
+     the utility; this just lets the fill bleed sideways past the text. */
+  margin-inline: -0.5rem;
 }
-.touch-target::after {
+
+@media (hover: hover) {
+  a.row:hover {
+    background: var(--bg2);
+  }
+}
+
+/* Section labels invert: solid blue block, background-coloured text. One hard
+   rectangle per section, no radius, no gradient. This is the pop. */
+.rail-label {
+  display: inline-block;
+  /* Grid blockifies inline-block and stretches it to the column, which locked
+     this box to the gutter width — 40px on mobile, 64px on desktop — while
+     "WRITING" needs 54px and "PROJECTS" needs ~68px. The background stopped at
+     the box edge, so the labels were being visibly cut off at both sizes.
+     `start` lets the box size to its text. */
+  justify-self: start;
+  /* The rail stroke is an absolutely-positioned ::before, so it paints above
+     in-flow content and drew a line straight through the label. Making the
+     label positioned too puts it later in paint order, so the block sits on
+     top and cleanly interrupts the stroke — which is what a section marker
+     on a ruler should do. */
+  position: relative;
+  background: var(--rail-accent);
+  color: var(--rail-on-accent);
+  padding: 0.1rem 0.3rem;
+  text-transform: uppercase;
+}
+
+/* Every row on the page shares this grid: rail on the left, one reading
+   column on the right. Children alternate rail cell / content cell, so
+   section labels and dates sit in the same rail without nesting grids —
+   which is what broke my first attempt at this. */
+.rail {
+  display: grid;
+  grid-template-columns: var(--rail-gutter) minmax(0, 1fr);
+  column-gap: var(--rail-gap);
+}
+
+/* The rail narrows on small screens instead of collapsing. Stacking the
+   metadata above each row would destroy the single vertical edge that is
+   the entire design, and "2026" needs very little room. */
+:root {
+  --rail-gutter: 2.5rem;
+  --rail-gap: 0.875rem;
+  --page-pad: 1rem;
+  /* Page top margin, and the gap between the masthead rule and a post title.
+     Both live here because the rail stroke has to measure itself against
+     them — see .rail-seg. */
+  --page-top: 3rem;
+  --head-gap: 2.5rem;
+}
+@media (min-width: 640px) {
+  :root {
+    --rail-gutter: var(--spacing-gutter);
+    --rail-gap: 1.5rem;
+    --page-pad: 1.5rem;
+  }
+}
+
+
+/* The rail, made continuous.
+   One hairline down the channel between the gutter and the text column,
+   running the full height of the page — so the spine exists beside the name
+   and the footer, not only beside the dated rows. Padding comes from the same
+   variable the line is positioned with, so the two can never drift apart. */
+.page {
+  position: relative;
+  padding-inline: var(--page-pad);
+  padding-top: var(--page-top);
+}
+
+/* The line's job is to bind many dated rows into one ledger, which is an
+   index problem. A post has a single date in the rail, so the stroke has less
+   work to do there — but removing it outright makes arriving from the index
+   feel like something broke. Reading pages get all three treatments behind a
+   data attribute so the choice can be made by looking. The index is always
+   full and is deliberately not affected by the picker. */
+.page-rail::before {
   content: "";
   position: absolute;
-  inset: -6px;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--page-pad) + var(--rail-gutter) + var(--rail-gap) / 2);
+  width: 1px;
+  background: var(--ui1);
 }
 
-/* Theme toggle — the sun morphs into the moon and back */
-#theme-toggle {
-  transition:
-    color 200ms var(--ease-out),
-    background-color 200ms var(--ease-out),
-    transform 150ms var(--ease-out);
+/* HEAD — the reading-page treatment.
+   The stroke spans the masthead and the post title, then stops dead where
+   prose begins: continuity when you arrive from the index, no vertical edge
+   sitting beside 2,000 words.
+   Drawn as two segments that meet exactly, rather than one stroke cut at a
+   guessed height. Each segment reaches up by the exact gap above it — the
+   masthead by the page's top padding, the title by the gap under the
+   masthead rule — so the join is seamless and the stroke ends at the real
+   bottom of the title however many lines it wraps to. */
+.rail-seg {
+  position: relative;
 }
 
-#theme-toggle:active {
-  transform: scale(0.9);
+.rail-seg::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--seg-top, 0px));
+  bottom: 0;
+  left: calc(var(--rail-gutter) + var(--rail-gap) / 2);
+  width: 1px;
+  background: var(--ui1);
 }
 
-.sun-and-moon > :is(.moon, .sun, .sun-beams) {
-  transform-origin: center;
-}
-
-/* Same two easing tokens as the rest of the site — the old springy
-   overshoot curves were off-system */
-.sun-and-moon > .sun {
-  transition: transform 500ms var(--ease-out);
-}
-
-.sun-and-moon > .sun-beams {
-  transition:
-    transform 500ms var(--ease-out),
-    opacity 500ms var(--ease-out);
-}
-
-.sun-and-moon .moon > circle {
-  transition: cx 250ms var(--ease-out);
-}
-
-.dark .sun-and-moon > .sun {
-  transform: scale(1.75);
-  transition-timing-function: var(--ease-out);
-  transition-duration: 250ms;
-}
-
-.dark .sun-and-moon > .sun-beams {
-  opacity: 0;
-  transform: rotateZ(-25deg);
-  transition-duration: 150ms;
-}
-
-.dark .sun-and-moon > .moon > circle {
-  cx: 17;
-  transition-delay: 250ms;
-  transition-duration: 500ms;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sun-and-moon > .sun,
-  .sun-and-moon > .sun-beams,
-  .sun-and-moon .moon > circle {
-    transition: none;
-  }
-
-  ::view-transition-group(nav-underline),
-  ::view-transition-old(nav-underline),
-  ::view-transition-new(nav-underline) {
-    animation: none;
-  }
-}
-
-.prose-reading {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Reading surface, on the index's type scale rather than its own.
+   One ladder for the whole site: 24 title / 16 heading / 14 body / 12 meta.
+   Leading is 1.6 rather than the index's 1.55 — the only concession, because
+   a long column at 14px/1.55 is genuinely hard to hold your place in, and
+   line-height doesn't change the size match at all. */
+.prose {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--tx1);
+  overflow-wrap: break-word;
   hanging-punctuation: first last;
 }
-
-/* Prose — wire typography plugin to our palette */
-.prose {
-  --tw-prose-body: var(--prose-body);
-  --tw-prose-headings: var(--tx1);
-  --tw-prose-lead: var(--tx2);
-  --tw-prose-links: var(--accent);
-  --tw-prose-bold: var(--tx1);
-  --tw-prose-counters: var(--tx2);
-  --tw-prose-bullets: var(--tx3);
-  --tw-prose-hr: var(--ui1);
-  --tw-prose-quotes: var(--tx1);
-  --tw-prose-quote-borders: var(--ui2);
-  --tw-prose-captions: var(--tx3);
-  --tw-prose-code: var(--tx1);
-  --tw-prose-pre-code: var(--tx1);
-  --tw-prose-pre-bg: var(--bg2);
-  --tw-prose-th-borders: var(--ui1);
-  --tw-prose-td-borders: var(--ui1);
-  font-feature-settings: "kern", "liga", "calt";
-  /* 17px body — larger than UI text, smaller than prose-lg's 18px */
-  font-size: 1.0625rem;
-  /* Long inline code and URLs break instead of stretching the page
-     on narrow screens (overflow-wrap inherits) */
-  overflow-wrap: break-word;
+.prose > * + * {
+  margin-top: 1.25em;
 }
-
-/* Wide tables scroll inside their own box on small screens */
-.prose :where(table) {
-  display: block;
-  overflow-x: auto;
+.prose h2,
+.prose h3 {
+  color: var(--tx1);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
 }
-
-.prose :where(p) {
-  line-height: 1.72;
+.prose h2 {
+  font-size: 1.25rem;
+  letter-spacing: -0.015em;
+  margin-top: 2.4em;
+}
+.prose h3 {
+  font-size: 1rem;
+  margin-top: 1.8em;
+}
+.prose p {
   text-wrap: pretty;
   orphans: 2;
   widows: 2;
 }
-
-.prose :where(h1, h2, h3, h4) {
-  letter-spacing: -0.018em;
-  text-wrap: balance;
-  line-height: 1.25;
-  /* Anchored headings land clear of the sticky nav pill */
-  scroll-margin-top: 6rem;
-}
-
-.prose :where(h2) {
-  font-weight: 600;
-  letter-spacing: -0.022em;
-  margin-top: 2.4em;
-}
-
-.prose :where(h3) {
-  font-weight: 600;
-  letter-spacing: -0.015em;
-}
-
-.dark .prose :where(p) {
-  letter-spacing: 0.001em;
-}
-
-.dark .prose :where(strong) {
-  font-weight: 600;
+.prose strong {
   color: var(--tx1);
+  font-weight: 600;
 }
-
-.prose :where(code):not(:where(pre *)) {
-  @apply px-1.5 py-0.5 rounded-sm text-[0.92em] font-normal;
-  background-color: var(--bg3);
-  border: 1px solid var(--ui1);
+/* .prose a is styled up with .link — one rule, both surfaces. */
+.prose ul,
+.prose ol {
+  padding-left: 1.25rem;
 }
-.prose :where(code):not(:where(pre *))::before,
-.prose :where(code):not(:where(pre *))::after { content: ""; }
-
-.prose :where(pre) {
-  @apply rounded-lg;
-  background-color: var(--bg2) !important;
-  border: 1px solid var(--ui1);
-  line-height: 1.6;
+.prose ul {
+  list-style: disc;
 }
-
-.prose :where(a) {
-  @apply no-underline hover:underline decoration-accent/40 underline-offset-4;
+.prose ol {
+  list-style: decimal;
 }
-
-.prose :where(blockquote) {
-  font-style: normal;
-  border-left-width: 2px;
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose blockquote {
+  border-left: 2px solid var(--ui1);
   padding-left: 1.25em;
   color: var(--tx2);
 }
-.prose :where(blockquote p:first-of-type)::before,
-.prose :where(blockquote p:last-of-type)::after { content: ""; }
-
-/* Wide equations scroll sideways on small screens */
+.prose hr {
+  border-top: 1px solid var(--ui1);
+}
+.prose img {
+  max-width: 100%;
+  height: auto;
+}
+.prose :not(pre) > code {
+  background: var(--bg3);
+  border: 1px solid var(--ui1);
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+.prose pre {
+  background: var(--bg2) !important;
+  border: 1px solid var(--ui1);
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+.prose table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  font-size: var(--text-body);
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--ui1);
+  padding: 0.4em 0.6em;
+  text-align: left;
+}
 .prose .katex-display {
-  @apply text-foreground;
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-/* Email popover */
-.email-popover {
-  position: fixed;
-  inset: unset;
-  margin: 0;
-  padding: 0.25rem;
-  border: 1px solid var(--ui1);
-  border-radius: 0.5rem;
-  background: var(--bg2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  align-items: center;
-  gap: 0.125rem;
-  white-space: nowrap;
-  transform-origin: bottom center;
-  opacity: 0;
-  transform: translateY(4px) scale(0.95);
-  transition: opacity 200ms var(--ease-out-expo),
-              transform 200ms var(--ease-out-expo),
-              overlay 200ms allow-discrete,
-              display 200ms allow-discrete;
+/* Shiki dark variant */
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
 }
-.email-popover:popover-open {
-  display: flex;
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.email-popover.closing {
-  opacity: 0;
-  transform: translateY(4px) scale(0.92);
-}
-@starting-style {
-  .email-popover:popover-open {
-    opacity: 0;
-    transform: translateY(4px) scale(0.92);
-  }
-}
-.dark .email-popover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-.email-popover-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.3rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.8125rem;
-  color: var(--tx2);
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background 150ms var(--ease-out),
-    color 150ms var(--ease-out),
-    transform 150ms var(--ease-out);
-}
-@media (hover: hover) {
-  .email-popover-item:hover {
-    background: var(--bg3);
-    color: var(--tx1);
-  }
-}
-.email-popover-item:active {
-  transform: scale(0.96);
-}
-.email-popover-divider {
-  width: 1px;
-  height: 1rem;
-  background: var(--ui1);
-  flex-shrink: 0;
-}
-.email-confirm-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg2);
-  color: var(--accent);
-  pointer-events: none;
-  clip-path: inset(0 100% 0 0 round 0.5rem);
-  transition: clip-path 250ms var(--ease-out);
-}
-.email-check-path {
-  stroke-dasharray: 28;
-  stroke-dashoffset: 28;
-}
-.email-popover.copied .email-confirm-copied {
-  clip-path: inset(0 0 0 0 round 0.5rem);
-}
-.email-popover.copied .email-check-path {
-  animation: email-draw 300ms 200ms var(--ease-out) forwards;
-}
-@keyframes email-draw {
-  to { stroke-dashoffset: 0; }
-}
-
-/* Under reduced motion the popover still works — the confirmation just
-   appears instead of drawing itself */
-@media (prefers-reduced-motion: reduce) {
-  .email-popover,
-  .email-confirm-overlay {
-    transition: none;
-  }
-
-  .email-popover.copied .email-check-path {
-    animation: none;
-    stroke-dashoffset: 0;
-  }
+.dark .astro-code {
+  background: var(--bg2) !important;
 }

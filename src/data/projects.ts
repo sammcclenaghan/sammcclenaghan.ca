@@ -2,47 +2,36 @@ export interface Project {
   name: string;
   href: string;
   description: string;
-  featured?: boolean;
+  year: number;
 }
 
+// Curated, not complete. Four things that clear both bars: you built the
+// hard part, and someone used it.
 export const projects: Project[] = [
   {
     name: "courseflow",
     href: "https://courseflow.smccl.ca",
     description:
-      "A simple tool to browse and schedule UVic courses.",
-    featured: true,
+      "Course search, live enrollment data, and conflict-free timetable building for UVic students.",
+    year: 2026,
   },
   {
     name: "mildred",
     href: "https://github.com/sammcclenaghan/mildred",
     description:
-      "An agent that runs plain-English rules for you, sandboxed with Apple containers.",
-    featured: true,
+      "Runs file organization rules written in plain English, sandboxed in Apple containers.",
+    year: 2026,
+  },
+  {
+    name: "uvic-scholarships",
+    href: "https://github.com/sammcclenaghan/uvic-scholarships",
+    description: "Fast search over University of Victoria scholarships.",
+    year: 2025,
   },
   {
     name: "git-fad",
     href: "https://github.com/sammcclenaghan/git-fad",
-    description: "Git add with fuzzy searching, built in Rust.",
-    featured: true,
-  },
-  {
-    name: "job tracker",
-    href: "https://github.com/sammcclenaghan/job_tracker",
-    description:
-      "A job application tracker with AI-powered job posting parsing and organization, built with Ruby on Rails.",
-    featured: true,
-  },
-  {
-    name: "photograph",
-    href: "https://github.com/sammcclenaghan/photograph",
-    description:
-      "A photography portfolio and gallery app built with Next.js, React and PostgreSQL.",
-  },
-  {
-    name: "uvic scholarships",
-    href: "https://github.com/sammcclenaghan/uvic-scholarships",
-    description:
-      "A fast search tool for University of Victoria scholarships.",
+    description: "git add with fuzzy searching, in Rust.",
+    year: 2025,
   },
 ];

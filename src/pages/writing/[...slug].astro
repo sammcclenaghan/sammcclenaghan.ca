@@ -1,62 +1,69 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import SectionHeading from "../../components/SectionHeading.astro";
 import { getCollection, render } from "astro:content";
-// Self-hosted KaTeX styles, version-matched to the installed package
-// (the old CDN link was pinned to 0.15.2 against katex 0.16.x output)
-import "katex/dist/katex.min.css";
+import type { GetStaticPaths } from "astro";
 
-export async function getStaticPaths() {
+export const getStaticPaths = (async () => {
   const posts = await getCollection("blog");
   return posts.map((post) => ({
     params: { slug: post.id },
-    props: post,
+    props: { post },
   }));
-}
+}) satisfies GetStaticPaths;
 
-const post = Astro.props;
+const { post } = Astro.props;
 const { Content } = await render(post);
 
-const words = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
-const readingTime = Math.max(1, Math.round(words / 200));
-
-function formatDate(date: Date) {
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
+// Short form — it lives in a 4rem gutter, not under the title.
+const formatted = post.data.date.toLocaleDateString("en-US", {
+  month: "short",
+  year: "numeric",
+});
 ---
 
 <Layout
   title={post.data.title}
   description={post.data.description}
-  image={`/og/${post.id}.png`}
-  type="article"
-  publishedDate={post.data.date}
-  static
+  math={post.data.math}
+  reading
 >
-  <article class="prose-reading">
-    <header class="space-y-3">
-      <SectionHeading title={post.data.title} as="h1" />
-      <p class="animate meta flex items-center gap-2">
-        <time datetime={post.data.date.toISOString().slice(0, 10)}>
-          {formatDate(post.data.date)}
-        </time>
-        <span aria-hidden="true">·</span>
-        <span>{readingTime} min read</span>
-      </p>
-    </header>
-
-    <div class="animate prose max-w-prose mt-10">
-      <Content />
+  <!-- The reading surface. Deliberately not the index: 17px, generous
+       leading, wider measure. Same tokens, different job — nobody reads
+       2,000 words at 14px in a dense grid. -->
+  <!-- Same rail as the index, so the title lands on the same vertical edge
+       as the name in the header and the date hangs beside it. -->
+  <article>
+    <!-- The title block carries the second half of the rail stroke, reaching
+         up by exactly the gap under the masthead rule so the two segments
+         join seamlessly. The stroke ends at this block's real bottom, so it
+         stays correct whether the title wraps to one line or three. -->
+    <div class="rail rail-seg pb-8" style="--seg-top: var(--head-gap)">
+      <time
+        class="meta rail-date pt-1.5"
+        datetime={post.data.date.toISOString().slice(0, 10)}
+      >
+        {formatted}
+      </time>
+      <h1
+        class="max-w-[34rem] text-2xl font-semibold leading-tight tracking-[-0.02em]"
+      >
+        {post.data.title}
+      </h1>
     </div>
 
-    <footer class="animate mt-16 pt-8 border-t border-border">
-      <a href="/writing" class="quiet-link">
-        <span class="quiet-arrow-back">←</span> All writing
-      </a>
-    </footer>
+    <!-- 34rem, the same measure as the index. At 16px that lands at ~66
+         characters per line, which is the sweet spot (45–75 is comfortable).
+         Measure and size move together: the 30rem column was correct for
+         14px and would run too short here. -->
+    <div class="rail">
+      <span aria-hidden="true"></span>
+      <div class="max-w-[34rem]">
+        <div class="prose">
+          <Content />
+        </div>
+
+        <a href="/" data-link class="meta mt-12 inline-block">← index</a>
+      </div>
+    </div>
   </article>
 </Layout>
