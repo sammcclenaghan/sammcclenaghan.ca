@@ -33,12 +33,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 // No nav. One page has nowhere to navigate to, and everything that isn't
 // this page is off-site — which belongs at the bottom, after the content,
 // not above it competing for the first thing you see.
+// Four labels, all one word. The address used to be its own label, which made
+// it the longest item in the row and the only one that wasn't a noun for a
+// destination — "email" matches github / resume / linkedin. The mailto is
+// unchanged, so the address is still one click away.
+//
+// No rss link. The feed itself still builds and is still announced in <head>
+// via <link rel="alternate">, which is how readers actually subscribe — so
+// removing the visible link costs nothing and breaks nobody.
 const links = [
   { href: "https://github.com/sammcclenaghan", label: "github" },
   { href: "/resume.pdf", label: "resume" },
-  { href: "mailto:sam@aream.ca", label: "sam@aream.ca" },
+  { href: "mailto:sam@aream.ca", label: "email" },
   { href: "https://www.linkedin.com/in/sam-mcclenaghan", label: "linkedin" },
-  { href: "/rss.xml", label: "rss" },
 ];
 ---
 
@@ -82,15 +89,16 @@ const links = [
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
 
-    <!-- The only blocking script on the site. ~250 bytes, runs before paint
-         so there's no flash of the wrong theme. -->
+    <!-- The only script on the site. Runs before paint so there's no flash of
+         the wrong theme.
+         The localStorage read is gone along with the theme button: nothing
+         writes that key any more, so keeping the read would have pinned anyone
+         who had ever pressed the old toggle to that choice permanently, with no
+         control left to change it back. The OS preference is now the only
+         input, which is also the answer most people want. -->
     <script is:inline>
       (() => {
-        const s = localStorage.getItem("theme");
-        const dark =
-          s === "dark" ||
-          (s !== "light" &&
-            matchMedia("(prefers-color-scheme: dark)").matches);
+        const dark = matchMedia("(prefers-color-scheme: dark)").matches;
         document.documentElement.classList.toggle("dark", dark);
         document
           .querySelector('meta[name="theme-color"]')
@@ -160,21 +168,8 @@ const links = [
               </a>
             ))
           }
-          <button id="theme" type="button" data-link class="cursor-pointer">
-            theme
-          </button>
         </div>
       </footer>
     </div>
-
-    <script is:inline>
-      document.getElementById("theme")?.addEventListener("click", () => {
-        const dark = document.documentElement.classList.toggle("dark");
-        localStorage.setItem("theme", dark ? "dark" : "light");
-        document
-          .querySelector('meta[name="theme-color"]')
-          ?.setAttribute("content", dark ? "#121212" : "#ffffff");
-      });
-    </script>
   </body>
 </html>

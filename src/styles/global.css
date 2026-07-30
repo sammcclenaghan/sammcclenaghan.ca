@@ -175,6 +175,39 @@
   color: var(--rail-accent);
 }
 
+/* Inline links in body copy. Deliberately NOT the accent colour: blue belongs
+   to the rail, and a blue link in the NOW paragraph would sit 40px under the
+   blue NOW label — the same two-blues-together problem that took hover
+   highlighting off the index rows.
+   So the affordance is a rule instead, which is the vocabulary this page is
+   already built from: the hairline under the masthead, the stroke down the
+   rail, the border on a table cell. A link is one more 1px line.
+   Colour is --tx3, not --ui1: --ui1 is for structure you shouldn't notice,
+   and a link has to be findable. Hover takes it to full text colour, which is
+   the only state change on the page and costs nothing since it's a colour.
+
+   One rule for both surfaces. A link in a post used to be accent blue while a
+   link on the index was underlined, so the same object looked like two
+   different things depending on which page you were on. Now no link anywhere
+   on the site rests in blue — the only blue left outside the rail is the
+   transient hover on footer and back links, which opt in via [data-link].
+   Underline-only is also the accessible choice: the affordance is never
+   carried by colour alone. */
+.link,
+.prose a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--tx3);
+  text-underline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .link:hover,
+  .prose a:hover {
+    text-decoration-color: var(--tx1);
+  }
+}
+
 /* One row of the index. The padding gives the hover fill room to breathe and
    the matching negative margin cancels it, so the rail still lines up exactly
    with the section label above it.
@@ -340,12 +373,7 @@
   color: var(--tx1);
   font-weight: 600;
 }
-.prose a {
-  color: var(--accent);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-}
+/* .prose a is styled up with .link — one rule, both surfaces. */
 .prose ul,
 .prose ol {
   padding-left: 1.25rem;
