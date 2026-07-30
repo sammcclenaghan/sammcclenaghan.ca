@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import PostRow from "../components/PostRow.astro";
 import ProjectRow from "../components/ProjectRow.astro";
+import VariantSwitcher from "../components/VariantSwitcher.astro";
 import { getCollection } from "astro:content";
 import { projects } from "../data/projects";
 
@@ -11,80 +12,83 @@ const featured = projects.filter((p) => p.featured);
 const posts = (await getCollection("blog"))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 4);
+
+// Work history, most recent first. The current role gets a sentence; the
+// rest get a line. Four equal-weight paragraphs made this the loudest
+// section on the page, and it's the least distinguishing thing here —
+// every applicant has a job list, almost none have the writing above it.
+const work = [
+  {
+    company: "Vertical City",
+    role: "Software Engineer Intern",
+    date: "May 2026 — Present",
+    note: "Backend systems that deliver content to digital signage in elevators and lobbies, with a focus on request handling, data usage, and keeping screens in sync.",
+  },
+  {
+    company: "Leanpub",
+    role: "Full Stack Developer Intern",
+    date: "May — Dec 2025",
+  },
+  {
+    company: "Trustscience",
+    role: "Application & APIs Developer Intern",
+    date: "Jan — Aug 2024",
+  },
+  {
+    company: "Trustscience",
+    role: "Frontend Developer Intern",
+    date: "Nov 2022 — Aug 2023",
+  },
+];
 ---
 
 <Layout>
   <div class="space-y-16 relative">
+    <!-- TODO(sam): these three paragraphs are the only words on the site
+         that really matter, and they should be yours. What's here is
+         assembled from the openings of your own posts — the black-box
+         habit is the one thing every piece of your writing has in common,
+         which is why it's the claim the page leads with. Rewrite it in
+         your own words, badly and by hand. Anything you'd be embarrassed
+         to have generated is a sign it's working. -->
     <div class="space-y-6">
-      <h1 class="animate font-semibold text-4xl">Sam McClenaghan</h1>
-      <div class="animate space-y-4 leading-relaxed text-muted-foreground">
+      <h1 class="animate font-semibold text-4xl" style="--i: 0">
+        Sam McClenaghan
+      </h1>
+      <div
+        class="animate space-y-4 leading-relaxed text-muted-foreground"
+        style="--i: 1"
+      >
         <p>
-          I am a Computer Science student at the University of Victoria,
-          currently building software at Vertical City. I like solving problems
-          simply and efficiently, and I'm always trying to learn something new.
+          I'm a computer science student at the University of Victoria,
+          currently building video infrastructure at Vertical City.
+        </p>
+        <p>
+          I have a hard time using tools I don't understand. Every few months
+          something I depend on turns out to be a black box — my editor, my
+          resume toolchain, the fuzzy finder I'd used for years without knowing
+          how it worked — so I rebuild a small version of it until it makes
+          sense, then write the explanation I wish I'd had. Most of what's
+          below started that way.
         </p>
         <p>I'm looking for a software internship for summer 2027.</p>
       </div>
     </div>
 
-    <div class="space-y-6">
-      <SectionHeading title="Work" />
-
-      <div class="animate space-y-1">
-        <h3 class="text-item font-medium">Vertical City</h3>
-        <span class="meta block">May 2026 — Present</span>
-        <p class="text-sm text-muted-foreground">Software Engineer Intern</p>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          Building backend systems that deliver content to digital signage in
-          elevators and lobbies, with a focus on request handling, data usage,
-          and keeping screens in sync.
-        </p>
-      </div>
-
-      <div class="animate space-y-1">
-        <h3 class="text-item font-medium">Leanpub</h3>
-        <span class="meta block">May — Dec 2025</span>
-        <p class="text-sm text-muted-foreground">Full Stack Developer Intern</p>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          Built and maintained features across Leanpub's Ruby on Rails
-          publishing platform, improving how authors sync and publish their
-          books.
-        </p>
-      </div>
-
-      <div class="animate space-y-1">
-        <h3 class="text-item font-medium">Trustscience</h3>
-        <span class="meta block">Jan — Aug 2024</span>
-        <p class="text-sm text-muted-foreground">
-          Application &amp; APIs Developer Intern
-        </p>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          Built backend services for file version control and real-time
-          financial analytics.
-        </p>
-      </div>
-
-      <div class="animate space-y-1">
-        <h3 class="text-item font-medium">Trustscience</h3>
-        <span class="meta block">Nov 2022 — Aug 2023</span>
-        <p class="text-sm text-muted-foreground">Frontend Developer Intern</p>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          Modernized the frontend with Vue 3 and serverless AWS Lambda services
-          for client onboarding.
-        </p>
-      </div>
-    </div>
-
-    <div class="space-y-6">
+    <!-- Writing before projects and work: it's the only section that shows
+         how he thinks rather than what he touched, and the claims under
+         each title are the evidence for the paragraph above. -->
+    <div class="space-y-6" style="--i: 2">
       <SectionHeading title="Writing" />
 
-      <ul class="space-y-4">
+      <ul class="space-y-5">
         {
           posts.map((post) => (
             <PostRow
               href={`/writing/${post.id}`}
               title={post.data.title}
               date={post.data.date}
+              description={post.data.description}
             />
           ))
         }
@@ -95,16 +99,17 @@ const posts = (await getCollection("blog"))
       </a>
     </div>
 
-    <div class="space-y-6">
+    <div class="space-y-6" style="--i: 3">
       <SectionHeading title="Projects" />
 
-      <ul class="space-y-4">
+      <ul class="space-y-5">
         {
           featured.map((project) => (
             <ProjectRow
               name={project.name}
               href={project.href}
               description={project.description}
+              status={project.status}
             />
           ))
         }
@@ -114,5 +119,29 @@ const posts = (await getCollection("blog"))
         All projects <span class="quiet-arrow">→</span>
       </a>
     </div>
+
+    <div class="space-y-6" style="--i: 4">
+      <SectionHeading title="Work" />
+
+      <div class="space-y-5">
+        {
+          work.map((job) => (
+            <div class="animate space-y-1">
+              <div class="flex items-baseline justify-between gap-4">
+                <h3 class="text-item font-medium">{job.company}</h3>
+                <span class="meta shrink-0">{job.date}</span>
+              </div>
+              <p class="text-sm text-muted-foreground">{job.role}</p>
+              {job.note && (
+                <p class="text-sm leading-relaxed text-muted-foreground">
+                  {job.note}
+                </p>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
   </div>
+  <VariantSwitcher />
 </Layout>

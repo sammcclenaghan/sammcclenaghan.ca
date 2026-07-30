@@ -1,0 +1,129 @@
+---
+// Variant A — RAIL
+//
+// Identity is pinned to the left and stops moving; substance scrolls past
+// it on the right. The asymmetry is the whole point: two different kinds
+// of thing get two different places, so the page has a spine instead of
+// being one column of interchangeable blocks. Reads like a document.
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../../components/Footer.astro";
+import PostRow from "../../components/PostRow.astro";
+import ProjectRow from "../../components/ProjectRow.astro";
+import VariantSwitcher from "../../components/VariantSwitcher.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../../data/projects";
+import { intro, tagline, work } from "../../data/home";
+
+const featured = projects.filter((p) => p.featured);
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+const navLinks = [
+  { href: "/writing", label: "Writing" },
+  { href: "/projects", label: "Projects" },
+];
+---
+
+<Layout shell="bare">
+  <div class="mx-auto max-w-5xl px-6 py-16 md:py-24">
+    <div class="grid gap-12 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-16">
+      <!-- The rail: who, in one screen, and it never leaves -->
+      <aside class="md:sticky md:top-24 md:h-fit space-y-6">
+        <div class="space-y-2">
+          <h1 class="animate text-2xl font-semibold leading-tight" style="--i: 0">
+            Sam<br class="hidden md:block" /> McClenaghan
+          </h1>
+          <p
+            class="animate text-sm leading-relaxed text-muted-foreground"
+            style="--i: 1"
+          >
+            {tagline}
+          </p>
+        </div>
+
+        <nav class="animate flex gap-4 md:flex-col md:gap-2" style="--i: 2">
+          {
+            navLinks.map((link) => (
+              <a
+                href={link.href}
+                class="text-item text-muted-foreground hover:text-foreground transition-colors duration-200 w-fit"
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </nav>
+      </aside>
+
+      <main class="space-y-16">
+        <div class="animate space-y-4 leading-relaxed text-muted-foreground" style="--i: 2">
+          {intro.map((p) => <p>{p}</p>)}
+        </div>
+
+        <section class="space-y-6">
+          <h2 class="animate text-lg font-semibold">Writing</h2>
+          <ul class="space-y-5">
+            {
+              posts.map((post) => (
+                <PostRow
+                  href={`/writing/${post.id}`}
+                  title={post.data.title}
+                  date={post.data.date}
+                  description={post.data.description}
+                />
+              ))
+            }
+          </ul>
+          <a href="/writing" class="quiet-link animate">
+            All writing <span class="quiet-arrow">→</span>
+          </a>
+        </section>
+
+        <section class="space-y-6">
+          <h2 class="animate text-lg font-semibold">Projects</h2>
+          <ul class="space-y-5">
+            {
+              featured.map((project) => (
+                <ProjectRow
+                  name={project.name}
+                  href={project.href}
+                  description={project.description}
+                  status={project.status}
+                />
+              ))
+            }
+          </ul>
+          <a href="/projects" class="quiet-link animate">
+            All projects <span class="quiet-arrow">→</span>
+          </a>
+        </section>
+
+        <section class="space-y-6">
+          <h2 class="animate text-lg font-semibold">Work</h2>
+          <div class="space-y-5">
+            {
+              work.map((job) => (
+                <div class="animate space-y-1">
+                  <div class="flex items-baseline justify-between gap-4">
+                    <h3 class="text-item font-medium">{job.company}</h3>
+                    <span class="meta shrink-0">{job.date}</span>
+                  </div>
+                  <p class="text-sm text-muted-foreground">{job.role}</p>
+                  {job.note && (
+                    <p class="text-sm leading-relaxed text-muted-foreground">
+                      {job.note}
+                    </p>
+                  )}
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <Footer />
+      </main>
+    </div>
+  </div>
+  <VariantSwitcher />
+</Layout>

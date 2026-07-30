@@ -1,0 +1,127 @@
+---
+// Variant B — LEDGER
+//
+// The text column stays exactly where it is today; dates step *out* of it
+// into a hanging gutter on the left. Everything you read — headline, lede,
+// section labels, titles — shares one hard left edge, and the dates form a
+// second, quieter rail beside it that you can scan without reading.
+//
+// That's the whole intervention: no new colors, no new type sizes, nothing
+// added to the page. It's the cheapest way to make a stack of rows read as
+// an index instead of a feed, which is why it feels the most designed of
+// the three while being the smallest departure.
+import Layout from "../../layouts/Layout.astro";
+import VariantSwitcher from "../../components/VariantSwitcher.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../../data/projects";
+import { intro, work } from "../../data/home";
+
+const featured = projects.filter((p) => p.featured);
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+// 4rem gutter + 1.5rem gap pulled left, so the content cell lands back on
+// the container's own edge and the dates hang in the margin. Collapses to a
+// plain block below sm, where there is no margin to hang into.
+const ROW =
+  "sm:grid sm:grid-cols-[4rem_minmax(0,1fr)] sm:gap-x-6 sm:-ml-[5.5rem]";
+const GUTTER = "meta hidden sm:block sm:text-right sm:pt-0.5";
+---
+
+<Layout>
+  <div class="space-y-14">
+    <div class="animate space-y-6" style="--i: 0">
+      <h1 class="text-4xl font-semibold">Sam McClenaghan</h1>
+      <div class="space-y-4 leading-relaxed text-muted-foreground">
+        {intro.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+
+    <section class="space-y-5">
+      <h2 class="animate text-lg font-semibold" style="--i: 1">Writing</h2>
+      <ul class="space-y-4">
+        {
+          posts.map((post) => (
+            <li class:list={["animate", ROW]}>
+              <time
+                class={GUTTER}
+                datetime={post.data.date.toISOString().slice(0, 10)}
+              >
+                {post.data.date.getFullYear()}
+              </time>
+              <a href={`/writing/${post.id}`} class="group block space-y-1">
+                <span class="text-item font-medium block group-hover:text-accent transition-colors duration-200">
+                  {post.data.title}
+                </span>
+                {post.data.description && (
+                  <p class="text-sm text-muted-foreground leading-relaxed">
+                    {post.data.description}
+                  </p>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/writing" class="quiet-link animate">
+        All writing <span class="quiet-arrow">→</span>
+      </a>
+    </section>
+
+    <section class="space-y-5">
+      <h2 class="animate text-lg font-semibold">Projects</h2>
+      <ul class="space-y-4">
+        {
+          featured.map((project) => (
+            <li class:list={["animate", ROW]}>
+              <span class={GUTTER} aria-hidden="true" />
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group block space-y-1"
+              >
+                <span class="text-item font-medium block group-hover:text-accent transition-colors duration-200">
+                  {project.name}
+                </span>
+                <p class="text-sm text-muted-foreground leading-relaxed">
+                  {project.description}
+                </p>
+                {project.status && (
+                  <span class="meta block">{project.status}</span>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/projects" class="quiet-link animate">
+        All projects <span class="quiet-arrow">→</span>
+      </a>
+    </section>
+
+    <section class="space-y-5">
+      <h2 class="animate text-lg font-semibold">Work</h2>
+      <div class="space-y-4">
+        {
+          work.map((job) => (
+            <div class:list={["animate", ROW]}>
+              <span class={GUTTER}>{job.years}</span>
+              <div class="space-y-1">
+                <h3 class="text-item font-medium">{job.company}</h3>
+                <p class="text-sm text-muted-foreground">{job.role}</p>
+                {job.note && (
+                  <p class="text-sm leading-relaxed text-muted-foreground">
+                    {job.note}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+  <VariantSwitcher />
+</Layout>

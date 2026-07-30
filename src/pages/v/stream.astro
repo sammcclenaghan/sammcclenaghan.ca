@@ -1,0 +1,121 @@
+---
+// Variant D — STREAM
+//
+// There are no sections. Posts, projects, and jobs are one reverse-
+// chronological list, each tagged by kind, dates hanging in a left rail.
+//
+// The argument: sections are a filing decision, and filing is only useful
+// when a visitor arrives knowing which drawer they want. Nobody does. What
+// they actually want to know is whether you're still making things — and a
+// single dated stream answers that in one glance, where three separate
+// stacks hide it. It also scales the way your output actually accumulates:
+// this page gets more convincing at forty entries, not messier.
+import Layout from "../../layouts/Layout.astro";
+import VariantSwitcher from "../../components/VariantSwitcher.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../../data/projects";
+import { intro, work } from "../../data/home";
+
+type Entry = {
+  kind: "writing" | "project" | "work";
+  title: string;
+  href?: string;
+  external?: boolean;
+  note?: string;
+  meta?: string;
+  sort: number;
+  label: string;
+};
+
+const posts = await getCollection("blog");
+
+const entries: Entry[] = [
+  ...posts.map((post) => ({
+    kind: "writing" as const,
+    title: post.data.title,
+    href: `/writing/${post.id}`,
+    note: post.data.description,
+    sort: post.data.date.valueOf(),
+    label: post.data.date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+  })),
+  ...projects.map((project) => ({
+    kind: "project" as const,
+    title: project.name,
+    href: project.href,
+    external: true,
+    note: project.description,
+    meta: project.status,
+    // Undated projects sort to the bottom rather than get a guessed year.
+    sort: project.year ? new Date(project.year, 0).valueOf() : 0,
+    label: project.year ? String(project.year) : "—",
+  })),
+  ...work.map((job) => ({
+    kind: "work" as const,
+    title: job.company,
+    note: job.role,
+    sort: new Date(Number(job.years.slice(0, 4)), 0).valueOf(),
+    label: job.years,
+  })),
+].sort((a, b) => b.sort - a.sort);
+
+const KIND_LABEL: Record<Entry["kind"], string> = {
+  writing: "wrote",
+  project: "built",
+  work: "worked",
+};
+---
+
+<Layout>
+  <div class="space-y-12">
+    <div class="animate space-y-6" style="--i: 0">
+      <h1 class="text-4xl font-semibold">Sam McClenaghan</h1>
+      <div class="space-y-4 leading-relaxed text-muted-foreground">
+        {intro.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+
+    <ul class="space-y-6">
+      {
+        entries.map((entry, i) => {
+          const Tag = entry.href ? "a" : "div";
+          return (
+            <li
+              class="animate sm:grid sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-x-6 sm:-ml-[6rem]"
+              style={`--i: ${Math.min(i + 1, 6)}`}
+            >
+              <div class="hidden sm:flex sm:flex-col sm:items-end sm:pt-0.5">
+                <span class="meta">{entry.label}</span>
+                <span class="meta opacity-60">{KIND_LABEL[entry.kind]}</span>
+              </div>
+              <Tag
+                href={entry.href}
+                target={entry.external ? "_blank" : undefined}
+                rel={entry.external ? "noopener noreferrer" : undefined}
+                class="group block space-y-1"
+              >
+                <span
+                  class:list={[
+                    "text-item font-medium block transition-colors duration-200",
+                    entry.href && "group-hover:text-accent",
+                  ]}
+                >
+                  {entry.title}
+                </span>
+                {entry.note && (
+                  <p class="text-sm text-muted-foreground leading-relaxed">
+                    {entry.note}
+                  </p>
+                )}
+                {entry.meta && <span class="meta block">{entry.meta}</span>}
+              </Tag>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+  <VariantSwitcher />
+</Layout>

@@ -9,12 +9,25 @@ const links = [
 
 const path = Astro.url.pathname;
 
+interface Props {
+  wide?: boolean;
+}
+
+// The pill tracks the content column's width — "exactly over the content
+// column" only holds if both agree.
+const { wide = false } = Astro.props;
+
 function isCurrent(href: string) {
   return path === href || path.startsWith(`${href}/`);
 }
 ---
 
-<header class="sticky top-3 z-40 mt-3 mb-12 w-full max-w-2xl mx-auto px-6">
+<header
+  class:list={[
+    "sticky top-3 z-40 mt-3 mb-12 w-full mx-auto px-6",
+    wide ? "max-w-5xl" : "max-w-2xl",
+  ]}
+>
   <nav class="nav-pill flex items-center justify-between px-5 py-1.5">
     <a
       href="/"

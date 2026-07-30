@@ -1,0 +1,117 @@
+---
+// Variant E — QUESTION
+//
+// The page is a list of questions you couldn't leave alone. Each question is
+// the headline, set large; what you built or wrote is the small answer
+// underneath.
+//
+// This is the only variant where the *structure* makes your argument instead
+// of decorating it. It also inverts the usual portfolio: a stranger scans ten
+// problems you found interesting rather than ten artifacts you produced, and
+// interesting-problem-taste is the thing you can't fake and they can't get
+// from a resume. Riskiest of the set — it lives or dies on the questions
+// being genuinely good, and it puts the writing above everything else.
+import Layout from "../../layouts/Layout.astro";
+import VariantSwitcher from "../../components/VariantSwitcher.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../../data/projects";
+import { questions, tagline, work } from "../../data/home";
+
+const featured = projects.filter((p) => p.featured);
+
+const posts = (await getCollection("blog"))
+  .filter((post) => questions[post.id])
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout>
+  <div class="space-y-16">
+    <div class="animate space-y-4" style="--i: 0">
+      <h1 class="text-2xl font-semibold">Sam McClenaghan</h1>
+      <p class="leading-relaxed text-muted-foreground">
+        Computer science at the University of Victoria, currently building video
+        infrastructure at Vertical City. {tagline} Looking for a software
+        internship for summer 2027.
+      </p>
+    </div>
+
+    <div class="space-y-2">
+      <h2 class="animate meta uppercase tracking-wide" style="--i: 1">
+        Questions I couldn't leave alone
+      </h2>
+
+      <ul class="divide-y divide-border">
+        {
+          posts.map((post, i) => (
+            <li class="animate" style={`--i: ${Math.min(i + 2, 6)}`}>
+              <a href={`/writing/${post.id}`} class="group block py-6 space-y-2">
+                <p class="text-2xl font-semibold leading-snug group-hover:text-accent transition-colors duration-200">
+                  {questions[post.id]}
+                </p>
+                <p class="text-sm text-muted-foreground leading-relaxed">
+                  {post.data.description}
+                </p>
+                <span class="meta block">
+                  {post.data.date.toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Everything that isn't a question gets a deliberately quiet footer
+         section. On this layout they're supporting evidence, not the pitch. -->
+    <div class="grid gap-12 sm:grid-cols-2">
+      <section class="space-y-4">
+        <h2 class="animate meta uppercase tracking-wide">Built</h2>
+        <ul class="space-y-3">
+          {
+            featured.map((project) => (
+              <li class="animate">
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group block"
+                >
+                  <span class="text-item font-medium group-hover:text-accent transition-colors duration-200">
+                    {project.name}
+                  </span>
+                  <p class="text-sm text-muted-foreground leading-relaxed">
+                    {project.description}
+                  </p>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a href="/projects" class="quiet-link animate">
+          All projects <span class="quiet-arrow">→</span>
+        </a>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="animate meta uppercase tracking-wide">Worked</h2>
+        <ul class="space-y-3">
+          {
+            work.map((job) => (
+              <li class="animate">
+                <div class="flex items-baseline justify-between gap-3">
+                  <span class="text-item font-medium">{job.company}</span>
+                  <span class="meta shrink-0">{job.years}</span>
+                </div>
+                <p class="text-sm text-muted-foreground">{job.role}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </div>
+  <VariantSwitcher />
+</Layout>

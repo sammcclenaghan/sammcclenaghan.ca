@@ -1,0 +1,131 @@
+---
+// Variant C — WIDE
+//
+// Same anatomy as the site today, but on a 5xl canvas with the section
+// label parked in a sticky left third. The lede gets to be genuinely large,
+// and projects go two-up so the page has more than one column rhythm. More
+// editorial, more air — and the biggest departure from the starter shape,
+// which also makes it the easiest to get wrong once there's more content.
+import Layout from "../../layouts/Layout.astro";
+import VariantSwitcher from "../../components/VariantSwitcher.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../../data/projects";
+import { intro, work } from "../../data/home";
+
+const featured = projects.filter((p) => p.featured);
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+const SECTION = "grid gap-6 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-12";
+const LABEL =
+  "animate text-lg font-semibold md:sticky md:top-24 md:h-fit md:text-item md:text-muted-foreground";
+---
+
+<Layout shell="wide">
+  <div class="space-y-20">
+    <div class="max-w-3xl space-y-6">
+      <h1 class="animate text-5xl font-semibold tracking-tight" style="--i: 0">
+        Sam McClenaghan
+      </h1>
+      <div
+        class="animate space-y-4 text-lg leading-relaxed text-muted-foreground"
+        style="--i: 1"
+      >
+        {intro.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+
+    <section class={SECTION}>
+      <h2 class={LABEL}>Writing</h2>
+      <div class="space-y-6">
+        <ul class="space-y-6">
+          {
+            posts.map((post) => (
+              <li class="animate border-b border-border pb-6 last:border-0 last:pb-0">
+                <a href={`/writing/${post.id}`} class="group block space-y-1.5">
+                  <span class="text-xl font-medium block group-hover:text-accent transition-colors duration-200">
+                    {post.data.title}
+                  </span>
+                  {post.data.description && (
+                    <p class="text-muted-foreground leading-relaxed max-w-2xl">
+                      {post.data.description}
+                    </p>
+                  )}
+                  <time
+                    class="meta block"
+                    datetime={post.data.date.toISOString().slice(0, 10)}
+                  >
+                    {post.data.date.toLocaleDateString("en-US", {
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </time>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a href="/writing" class="quiet-link animate">
+          All writing <span class="quiet-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class={SECTION}>
+      <h2 class={LABEL}>Projects</h2>
+      <div class="space-y-6">
+        <ul class="grid gap-x-10 gap-y-6 sm:grid-cols-2">
+          {
+            featured.map((project) => (
+              <li class="animate">
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group block space-y-1"
+                >
+                  <span class="text-item font-medium block group-hover:text-accent transition-colors duration-200">
+                    {project.name}
+                  </span>
+                  <p class="text-sm text-muted-foreground leading-relaxed">
+                    {project.description}
+                  </p>
+                  {project.status && (
+                    <span class="meta block">{project.status}</span>
+                  )}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a href="/projects" class="quiet-link animate">
+          All projects <span class="quiet-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class={SECTION}>
+      <h2 class={LABEL}>Work</h2>
+      <div class="space-y-5">
+        {
+          work.map((job) => (
+            <div class="animate space-y-1 max-w-2xl">
+              <div class="flex items-baseline justify-between gap-4">
+                <h3 class="text-item font-medium">{job.company}</h3>
+                <span class="meta shrink-0">{job.date}</span>
+              </div>
+              <p class="text-sm text-muted-foreground">{job.role}</p>
+              {job.note && (
+                <p class="text-sm leading-relaxed text-muted-foreground">
+                  {job.note}
+                </p>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+  <VariantSwitcher />
+</Layout>

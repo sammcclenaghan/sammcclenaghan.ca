@@ -1,0 +1,125 @@
+---
+// Variant F — TYPE
+//
+// One sentence takes the entire first screen at 8xl; everything after it is
+// deliberately small and dense. The memorable thing isn't an effect, it's the
+// ratio — a 96px statement immediately followed by 14px rows makes both read
+// harder than either would alone, and it costs nothing but restraint.
+//
+// This is the closest to Emil/Gustavo territory, and the trap is obvious: a
+// giant sentence had better be a sentence worth reading, or the scale reads
+// as bluster. Yours is at least true.
+import Layout from "../../layouts/Layout.astro";
+import Footer from "../../components/Footer.astro";
+import VariantSwitcher from "../../components/VariantSwitcher.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../../data/projects";
+import { work } from "../../data/home";
+
+const featured = projects.filter((p) => p.featured);
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
+---
+
+<Layout shell="bare">
+  <!-- First screen: the claim, and nothing else. No nav, no photo, no
+       scroll hint — if it doesn't hold on its own it isn't the right claim. -->
+  <section
+    class="min-h-[85vh] flex flex-col justify-center mx-auto max-w-6xl px-6 py-20"
+  >
+    <p class="animate meta mb-8" style="--i: 0">Sam McClenaghan</p>
+    <h1
+      class="animate text-5xl sm:text-7xl lg:text-8xl font-semibold leading-[0.95] tracking-[-0.035em] max-w-5xl"
+      style="--i: 1"
+    >
+      I rebuild things I don't understand, then write the explanation I wish
+      I'd had.
+    </h1>
+    <p
+      class="animate mt-10 max-w-xl leading-relaxed text-muted-foreground"
+      style="--i: 2"
+    >
+      Computer science at the University of Victoria, currently building video
+      infrastructure at Vertical City. Looking for a software internship for
+      summer 2027.
+    </p>
+  </section>
+
+  <!-- Everything else, small and tight, in one narrow column -->
+  <div class="mx-auto max-w-2xl px-6 pb-8 space-y-12">
+    <section class="space-y-3">
+      <h2 class="animate meta uppercase tracking-wide">Writing</h2>
+      <ul class="divide-y divide-border">
+        {
+          posts.map((post) => (
+            <li class="animate">
+              <a
+                href={`/writing/${post.id}`}
+                class="group flex items-baseline justify-between gap-6 py-2.5"
+              >
+                <span class="text-sm group-hover:text-accent transition-colors duration-200">
+                  {post.data.title}
+                </span>
+                <span class="meta shrink-0">
+                  {post.data.date.getFullYear()}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/writing" class="quiet-link animate">
+        All writing <span class="quiet-arrow">→</span>
+      </a>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="animate meta uppercase tracking-wide">Projects</h2>
+      <ul class="divide-y divide-border">
+        {
+          featured.map((project) => (
+            <li class="animate">
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex items-baseline justify-between gap-6 py-2.5"
+              >
+                <span class="text-sm group-hover:text-accent transition-colors duration-200">
+                  {project.name}
+                </span>
+                <span class="meta shrink-0 text-right">
+                  {project.status ?? project.description}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/projects" class="quiet-link animate">
+        All projects <span class="quiet-arrow">→</span>
+      </a>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="animate meta uppercase tracking-wide">Work</h2>
+      <ul class="divide-y divide-border">
+        {
+          work.map((job) => (
+            <li class="animate flex items-baseline justify-between gap-6 py-2.5">
+              <span class="text-sm">
+                {job.company}
+                <span class="text-muted-foreground"> · {job.role}</span>
+              </span>
+              <span class="meta shrink-0">{job.years}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <Footer />
+  </div>
+  <VariantSwitcher />
+</Layout>

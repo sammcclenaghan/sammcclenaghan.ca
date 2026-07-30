@@ -14,6 +14,11 @@ interface Props {
   publishedDate?: Date;
   /** Writing pages render static — no entrance animation, content is just there */
   static?: boolean;
+  /** Page skeleton. "column" is the site as it is: centered 2xl column
+      under the nav pill. "wide" is the same anatomy on a 5xl canvas.
+      "bare" hands the whole viewport to the page — no pill, no wrapper,
+      no footer — for layouts that carry their own navigation. */
+  shell?: "column" | "wide" | "bare";
 }
 
 const {
@@ -23,6 +28,7 @@ const {
   type = "website",
   publishedDate,
   static: isStatic = false,
+  shell = "column",
 } = Astro.props;
 
 const siteName = "Sam McClenaghan";
@@ -211,13 +217,26 @@ const articleSchema =
       id="page"
       data-static={isStatic ? "" : undefined}
     >
-      <Header />
-      <div class="w-full flex-1 flex flex-col mx-auto px-6 pb-8 max-w-2xl">
-        <main class="flex-1">
+      {
+        shell === "bare" ? (
           <slot />
-        </main>
-        <Footer />
-      </div>
+        ) : (
+          <>
+            <Header wide={shell === "wide"} />
+            <div
+              class:list={[
+                "w-full flex-1 flex flex-col mx-auto px-6 pb-8",
+                shell === "wide" ? "max-w-5xl" : "max-w-2xl",
+              ]}
+            >
+              <main class="flex-1">
+                <slot />
+              </main>
+              <Footer />
+            </div>
+          </>
+        )
+      }
     </div>
   </body>
 </html>

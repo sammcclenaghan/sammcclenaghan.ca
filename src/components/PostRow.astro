@@ -3,9 +3,13 @@ type Props = {
   href: string;
   title: string;
   date: Date;
+  /** The post's claim. Shown on the home page so someone scanning
+      collects a few opinions before clicking anything. Left off /writing,
+      where the list is long and titles alone scan faster. */
+  description?: string;
 };
 
-const { href, title, date } = Astro.props;
+const { href, title, date, description } = Astro.props;
 
 const formatted = date.toLocaleDateString("en-US", {
   month: "short",
@@ -20,6 +24,13 @@ const formatted = date.toLocaleDateString("en-US", {
     >
       {title}
     </span>
+    {
+      description && (
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          {description}
+        </p>
+      )
+    }
     <time class="meta block" datetime={date.toISOString().slice(0, 10)}>
       {formatted}
     </time>

@@ -1,0 +1,42 @@
+---
+// Scaffolding, not site furniture. Lets you flip between the structural
+// candidates without losing your place, and comes out with /v/* once you
+// pick one.
+const variants = [
+  { href: "/", label: "current" },
+  { href: "/v/rail", label: "rail" },
+  { href: "/v/ledger", label: "ledger" },
+  { href: "/v/wide", label: "wide" },
+  { href: "/v/stream", label: "stream" },
+  { href: "/v/question", label: "question" },
+  { href: "/v/type", label: "type" },
+  { href: "/v/mono", label: "mono" },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+
+<div
+  class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 nav-pill flex items-center gap-1 px-2 py-1"
+  style="min-height: 0"
+>
+  {
+    variants.map((v) => {
+      const current = path === v.href.replace(/\/$/, "");
+      return (
+        <a
+          href={v.href}
+          class:list={[
+            "nav-button px-2.5 py-1 rounded-full",
+            current
+              ? "text-foreground bg-secondary"
+              : "text-tx3 hover:text-foreground",
+          ]}
+          style="font-family: var(--font-mono); font-size: 0.75rem"
+        >
+          {v.label}
+        </a>
+      );
+    })
+  }
+</div>

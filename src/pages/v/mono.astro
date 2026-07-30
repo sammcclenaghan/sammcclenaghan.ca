@@ -1,0 +1,146 @@
+---
+// Variant G — MONO
+//
+// The whole page in Geist Mono, laid out as aligned columns. Not a fake
+// terminal — no prompts, no blinking cursor, no green-on-black cosplay. Just
+// the observation that a monospace grid gives you column alignment for free,
+// which is exactly what a dense index of small dated things wants.
+//
+// You've used Neovim for four years and typeset your resume in Typst. This is
+// the one layout here that a Rails-and-Figma person wouldn't have made, which
+// is the whole reason it's worth looking at. The risk is it reads as a costume
+// rather than a preference — mono at 13px for 800 words of intro is a real
+// legibility cost, which is why the intro here is three lines, not three
+// paragraphs.
+import Layout from "../../layouts/Layout.astro";
+import VariantSwitcher from "../../components/VariantSwitcher.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../../data/projects";
+import { tagline, work } from "../../data/home";
+
+const featured = projects.filter((p) => p.featured);
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 6);
+
+// Two columns, not three. A three-column table (year | title | description)
+// is the obvious mono layout and it fails immediately: your titles run to
+// "How VMAF Works: Scoring Video Quality Without Watching It", so any title
+// column narrow enough to leave room for a description truncates all of
+// them. Year rail plus a stacked title/description cell keeps the alignment
+// and loses nothing.
+const ROW = "grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-4 py-2";
+---
+
+<Layout shell="bare">
+  <div
+    class="mx-auto max-w-3xl px-6 py-16 md:py-24 space-y-10"
+    style="font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: -0.01em"
+  >
+    <header class="animate space-y-3" style="--i: 0">
+      <div class="flex items-baseline justify-between gap-4">
+        <h1 class="text-base font-medium">sam mcclenaghan</h1>
+        <span class="text-tx3">victoria, bc</span>
+      </div>
+      <p class="text-muted-foreground leading-relaxed max-w-lg">
+        {tagline}
+      </p>
+      <p class="text-tx3 leading-relaxed max-w-lg">
+        cs @ uvic · video infrastructure @ vertical city · looking for a
+        software internship, summer 2027
+      </p>
+    </header>
+
+    <!-- Three tables, one column grid. The alignment is doing all the work
+         that borders and cards usually do. -->
+    <section class="animate" style="--i: 1">
+      <div class="border-b border-border pb-1.5 mb-1 text-tx3 uppercase">
+        writing
+      </div>
+      <ul class="divide-y divide-border/60">
+        {
+          posts.map((post) => (
+            <li>
+              <a href={`/writing/${post.id}`} class:list={["group", ROW]}>
+                <span class="text-tx3 tabular-nums">
+                  {post.data.date.getFullYear()}
+                </span>
+                <span class="space-y-0.5">
+                  <span class="block text-foreground group-hover:text-accent transition-colors duration-200">
+                    {post.data.title}
+                  </span>
+                  {post.data.description && (
+                    <span class="block text-muted-foreground">
+                      {post.data.description}
+                    </span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="animate" style="--i: 2">
+      <div class="border-b border-border pb-1.5 mb-1 text-tx3 uppercase">
+        projects
+      </div>
+      <ul class="divide-y divide-border/60">
+        {
+          featured.map((project) => (
+            <li>
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class:list={["group", ROW]}
+              >
+                <span class="text-tx3 tabular-nums">{project.year ?? "—"}</span>
+                <span class="space-y-0.5">
+                  <span class="block text-foreground group-hover:text-accent transition-colors duration-200">
+                    {project.name}
+                  </span>
+                  <span class="block text-muted-foreground">
+                    {project.description}
+                  </span>
+                  {project.status && (
+                    <span class="block text-tx3">{project.status}</span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="animate" style="--i: 3">
+      <div class="border-b border-border pb-1.5 mb-1 text-tx3 uppercase">
+        work
+      </div>
+      <ul class="divide-y divide-border/60">
+        {
+          work.map((job) => (
+            <li class={ROW}>
+              <span class="text-tx3 tabular-nums">{job.years}</span>
+              <span class="space-y-0.5">
+                <span class="block text-foreground">{job.company}</span>
+                <span class="block text-muted-foreground">{job.role}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <nav class="animate flex gap-5 text-tx3 pt-2" style="--i: 4">
+      <a href="/writing" class="hover:text-foreground transition-colors">writing</a>
+      <a href="/projects" class="hover:text-foreground transition-colors">projects</a>
+      <a href="https://github.com/sammcclenaghan" target="_blank" rel="noopener noreferrer" class="hover:text-foreground transition-colors">github</a>
+      <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" class="hover:text-foreground transition-colors">resume</a>
+      <a href="mailto:sam@aream.ca" class="hover:text-foreground transition-colors">email</a>
+    </nav>
+  </div>
+  <VariantSwitcher />
+</Layout>

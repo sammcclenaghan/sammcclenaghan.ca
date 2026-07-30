@@ -3,9 +3,12 @@ type Props = {
   name: string;
   href: string;
   description: string;
+  /** Renders in the same mono voice as post dates — status is metadata,
+      not a second description. Absent status renders nothing. */
+  status?: string;
 };
 
-const { name, href, description } = Astro.props;
+const { name, href, description, status } = Astro.props;
 ---
 
 <li class="animate">
@@ -34,5 +37,6 @@ const { name, href, description } = Astro.props;
       </svg>
     </span>
     <p class="text-sm text-muted-foreground leading-relaxed">{description}</p>
+    {status && <span class="meta block">{status}</span>}
   </a>
 </li>
