@@ -1,0 +1,69 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+// Short form — it lives in a 4rem gutter, not under the title.
+const formatted = post.data.date.toLocaleDateString("en-US", {
+  month: "short",
+  year: "numeric",
+});
+---
+
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  math={post.data.math}
+  reading
+>
+  <!-- The reading surface. Deliberately not the index: 17px, generous
+       leading, wider measure. Same tokens, different job — nobody reads
+       2,000 words at 14px in a dense grid. -->
+  <!-- Same rail as the index, so the title lands on the same vertical edge
+       as the name in the header and the date hangs beside it. -->
+  <article>
+    <!-- The title block carries the second half of the rail stroke, reaching
+         up by exactly the gap under the masthead rule so the two segments
+         join seamlessly. The stroke ends at this block's real bottom, so it
+         stays correct whether the title wraps to one line or three. -->
+    <div class="rail rail-seg pb-8" style="--seg-top: var(--head-gap)">
+      <time
+        class="meta rail-date pt-1.5"
+        datetime={post.data.date.toISOString().slice(0, 10)}
+      >
+        {formatted}
+      </time>
+      <h1
+        class="max-w-[34rem] text-2xl font-semibold leading-tight tracking-[-0.02em]"
+      >
+        {post.data.title}
+      </h1>
+    </div>
+
+    <!-- 34rem, the same measure as the index. At 16px that lands at ~66
+         characters per line, which is the sweet spot (45–75 is comfortable).
+         Measure and size move together: the 30rem column was correct for
+         14px and would run too short here. -->
+    <div class="rail">
+      <span aria-hidden="true"></span>
+      <div class="max-w-[34rem]">
+        <div class="prose">
+          <Content />
+        </div>
+
+        <a href="/" data-link class="meta mt-12 inline-block">← index</a>
+      </div>
+    </div>
+  </article>
+</Layout>

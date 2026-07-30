@@ -1,0 +1,180 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Loads KaTeX stylesheet only on pages that actually contain math. */
+  math?: boolean;
+  /** Draws the rule under the name. The index turns this off because its
+      lede carries the rule instead — name and lede read as one block there,
+      which is the whole point. */
+  divider?: boolean;
+  /** Draws the continuous rail stroke. */
+  rail?: boolean;
+  /** Reading surface: the rail stroke spans the masthead and title only
+      (see .rail-seg) instead of running the whole page. */
+  reading?: boolean;
+}
+
+const {
+  title,
+  description = "Sam McClenaghan — computer science at the University of Victoria. Writing about things I've built and what building them taught me.",
+  math = false,
+  divider = true,
+  rail = true,
+  reading = false,
+} = Astro.props;
+
+const siteName = "Sam McClenaghan";
+const pageTitle = title ? `${title} — ${siteName}` : siteName;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+// No nav. One page has nowhere to navigate to, and everything that isn't
+// this page is off-site — which belongs at the bottom, after the content,
+// not above it competing for the first thing you see.
+const links = [
+  { href: "https://github.com/sammcclenaghan", label: "github" },
+  { href: "/resume.pdf", label: "resume" },
+  { href: "mailto:sam@aream.ca", label: "sam@aream.ca" },
+  { href: "https://www.linkedin.com/in/sam-mcclenaghan", label: "linkedin" },
+  { href: "/rss.xml", label: "rss" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteName}
+      href={new URL("rss.xml", Astro.site)}
+    />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Fonts are the only blocking asset. Preloaded so they land with the
+         first paint instead of swapping in after it. -->
+    <link
+      rel="preload"
+      href="/fonts/geist-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/geist-mono-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    {math && <link rel="stylesheet" href="/katex.min.css" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <!-- The only blocking script on the site. ~250 bytes, runs before paint
+         so there's no flash of the wrong theme. -->
+    <script is:inline>
+      (() => {
+        const s = localStorage.getItem("theme");
+        const dark =
+          s === "dark" ||
+          (s !== "light" &&
+            matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+        document
+          .querySelector('meta[name="theme-color"]')
+          ?.setAttribute("content", dark ? "#121212" : "#ffffff");
+      })();
+    </script>
+  </head>
+
+  <body>
+    <!-- Top margin matches the page's internal section rhythm (48px). Outer
+         spacing tighter than inner spacing always reads as cramped.
+         `.page` owns the horizontal padding and draws the continuous rail. -->
+    <div
+      class:list={[
+        "page mx-auto max-w-[44rem] pb-8",
+        !reading && rail && "page-rail",
+      ]}
+    >
+      <!-- Just the name. No mark, no nav, no band.
+           24px, which abandons the flat two-size scale on purpose: 16px
+           semibold was tried and it read as timid rather than restrained. A
+           page needs a face. Tracking goes negative as the size grows —
+           large type reads too loose at the tracking small type needs — and
+           leading tightens to match. -->
+      <header
+        class:list={[
+          "rail",
+          divider && "border-b border-ui1 pb-3",
+          reading && "rail-seg",
+        ]}
+        style={reading ? "--seg-top: var(--page-top)" : undefined}
+      >
+        <span aria-hidden="true"></span>
+        <a href="/" class="block w-fit">
+          <h2 class="text-2xl font-semibold leading-tight tracking-[-0.02em]">
+            Sam McClenaghan
+          </h2>
+        </a>
+      </header>
+
+      <!-- 20px, deliberately not 12px. The lede's own paragraphs sit 12px
+           apart, so matching that made the name read as another line of the
+           paragraph instead of the head of the block. Distinct levels need
+           distinct gaps — but still well under the 48px that separates
+           blocks, so name and lede stay one unit. -->
+      <main class:list={[divider ? "pt-[var(--head-gap)]" : "pt-6"]}>
+        <slot />
+      </main>
+
+      <!-- Everything that used to be a navbar, moved below the content. -->
+      <footer class="rail border-t border-ui1 mt-16 pt-3">
+        <span aria-hidden="true"></span>
+        <div class="meta flex flex-wrap gap-x-4 gap-y-1">
+          {
+            links.map((item) => (
+              <a
+                href={item.href}
+                data-link
+                target={item.href.startsWith("http") ? "_blank" : undefined}
+                rel={
+                  item.href.startsWith("http")
+                    ? "noopener noreferrer"
+                    : undefined
+                }
+              >
+                {item.label}
+              </a>
+            ))
+          }
+          <button id="theme" type="button" data-link class="cursor-pointer">
+            theme
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <script is:inline>
+      document.getElementById("theme")?.addEventListener("click", () => {
+        const dark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", dark ? "dark" : "light");
+        document
+          .querySelector('meta[name="theme-color"]')
+          ?.setAttribute("content", dark ? "#121212" : "#ffffff");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { projects } from "../data/projects";
+
+// Everything on one page. No /writing index, no /projects index — the only
+// other pages that exist are the posts themselves.
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const work = [
+  { company: "Vertical City", role: "Software Engineer Intern", years: "2026 —" },
+  { company: "Leanpub", role: "Full Stack Developer Intern", years: "2025" },
+  {
+    company: "Trustscience",
+    role: "Application & APIs Developer Intern",
+    years: "2024",
+  },
+  { company: "Trustscience", role: "Frontend Developer Intern", years: "2022 — 23" },
+];
+---
+
+<Layout>
+  <!-- TODO(sam): your words. Three short sentences at most — the page is
+       dense now, and a long paragraph fights it. This is still my draft and
+       it's the last borrowed thing on the site. -->
+  <!-- Below the rule, not above it: the name is the masthead and the rule
+       closes it, so the description reads as the first piece of content rather
+       than part of the letterhead.
+       The -16px pulls it to 24px under the rule against 56px below, so it
+       clearly attaches upward instead of floating between two sections — it
+       sat at 40/56 before, near-symmetrical, which grouped it with nothing.
+       Done here rather than on main's padding because posts need that value
+       to stay at --head-gap: the rail stroke segments measure against it. -->
+  <section class="rail -mt-4 pb-14">
+    <span aria-hidden="true"></span>
+    <div class="max-w-[34rem] space-y-3 leading-[1.6]">
+      <p>
+        Computer science at the University of Victoria. Currently building
+        backend systems at Vertical City.
+      </p>
+      <p>
+        I write about things I've built and what building them taught me.
+        Looking for a software internship for summer 2027.
+      </p>
+    </div>
+  </section>
+
+  <!-- Each row is one <a> that is itself the rail grid, so the date and the
+       text are inside a single hover target and a single click target. They
+       used to be two loose cells in the section's grid, which meant only the
+       title was clickable and nothing could highlight the row as a whole. -->
+  <section id="writing" class="space-y-2 pb-14">
+    <div class="rail">
+      <h2 class="meta rail-label">writing</h2>
+      <span aria-hidden="true"></span>
+    </div>
+
+    {
+      posts.map((post) => (
+        <a href={`/writing/${post.id}`} class="rail row">
+          <time
+            class="meta rail-date pt-px"
+            datetime={post.data.date.toISOString().slice(0, 10)}
+          >
+            {post.data.date.getFullYear()}
+          </time>
+          <div class="max-w-[34rem]">
+            <span class="block font-medium">{post.data.title}</span>
+            {post.data.description && (
+              <span class="block text-tx2">{post.data.description}</span>
+            )}
+          </div>
+        </a>
+      ))
+    }
+  </section>
+
+  <section id="projects" class="space-y-2 pb-14">
+    <div class="rail">
+      <h2 class="meta rail-label">projects</h2>
+      <span aria-hidden="true"></span>
+    </div>
+
+    {
+      projects.map((project) => (
+        <a
+          href={project.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rail row"
+        >
+          <span class="meta rail-date pt-px">{project.year}</span>
+          <div class="max-w-[34rem]">
+            <span class="block font-medium">{project.name}</span>
+            <span class="block text-tx2">{project.description}</span>
+          </div>
+        </a>
+      ))
+    }
+  </section>
+
+  <section id="work" class="space-y-2">
+    <div class="rail">
+      <h2 class="meta rail-label">work</h2>
+      <span aria-hidden="true"></span>
+    </div>
+
+    {
+      work.map((job) => (
+        <div class="rail row">
+          <span class="meta rail-date pt-px">{job.years}</span>
+          <div class="max-w-[34rem]">
+            <span class="block font-medium">{job.company}</span>
+            <span class="block text-tx2">{job.role}</span>
+          </div>
+        </div>
+      ))
+    }
+  </section>
+</Layout>
