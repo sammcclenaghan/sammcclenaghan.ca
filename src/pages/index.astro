@@ -9,15 +9,34 @@ const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 
+// One clause per role. The rows carried only company/title/year, which proves
+// a job was held, not that it went well — and this is the section a recruiter
+// actually reads. Lifted from Sam's own resume, so the claims are his.
 const work = [
-  { company: "Vertical City", role: "Software Engineer Intern", years: "2026 —" },
-  { company: "Leanpub", role: "Full Stack Developer Intern", years: "2025" },
+  {
+    company: "Vertical City",
+    role: "Software Engineer Intern",
+    years: "2026 —",
+    note: "Built an in-house video ad pipeline on AWS, replacing a paid third-party service.",
+  },
+  {
+    company: "Leanpub",
+    role: "Full Stack Developer Intern",
+    years: "2025",
+    note: "Rebuilt the Dropbox integration and background job progress tracking on a large Rails monolith.",
+  },
   {
     company: "Trustscience",
     role: "Application & APIs Developer Intern",
     years: "2024",
+    note: "A file version-control system using delta storage, and a real-time financial analytics platform.",
   },
-  { company: "Trustscience", role: "Frontend Developer Intern", years: "2022 — 23" },
+  {
+    company: "Trustscience",
+    role: "Frontend Developer Intern",
+    years: "2022 — 23",
+    note: "Modernized the frontend with Vue 3 and serverless Lambda services.",
+  },
 ];
 ---
 
@@ -47,15 +66,16 @@ const work = [
       <span aria-hidden="true"></span>
       <div class="max-w-[34rem] space-y-3">
         <p>
-          I'm a computer science student at the University of Victoria,
-          currently a software developer intern at Vertical City, where I write
-          Ruby that handles billions of requests.
+          I'm a computer science student at the University of Victoria, where
+          I'm the director of projects at VikeLabs. I'm also currently interning
+          at Vertical City, where I write Ruby that handles billions of
+          requests.
         </p>
         <p>
-          I like building things that make complicated processes easier for
-          people.
+          I love diving into weird, hard problems and making them feel simple.
+          When I'm not coding, I'm usually playing disc golf or watching the
+          Montreal Canadiens.
         </p>
-        <p>Looking for a software internship for summer 2027.</p>
       </div>
     </div>
   </section>
@@ -127,6 +147,7 @@ const work = [
           <div class="max-w-[34rem]">
             <span class="block font-medium">{job.company}</span>
             <span class="block text-tx2">{job.role}</span>
+            <span class="block text-tx2">{job.note}</span>
           </div>
         </div>
       ))
