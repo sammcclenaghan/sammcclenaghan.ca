@@ -1,0 +1,34 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<!-- Astro emits this as dist/404.html, which Netlify serves automatically for
+     any unmatched route on a static site. No redirect rule, no config. -->
+<Layout title="404" description="That page doesn't exist.">
+  <!-- Built from the index's section vocabulary rather than as its own thing:
+       a blue label in the gutter, content in the column beside it. A 404 is the
+       page most likely to be someone's first impression of the site, so it
+       should look like the site rather than like an error screen.
+
+       The label is the h1. Every other page's headline is a masthead or an
+       article title, and neither exists here — without this the page would
+       ship with no h1 at all, which is the exact outline bug that was just
+       fixed everywhere else. A heading doesn't have to be large to be the
+       heading. -->
+  <section class="space-y-2">
+    <div class="rail">
+      <h1 class="meta rail-label">404</h1>
+      <span aria-hidden="true"></span>
+    </div>
+
+    <div class="rail">
+      <span aria-hidden="true"></span>
+      <div class="max-w-[34rem]">
+        <p>This page doesn't exist.</p>
+        <!-- Same back link as the foot of every post, so the way home is in
+             the place a reader has already learned to look. -->
+        <a href="/" data-link class="meta mt-6 inline-block">← index</a>
+      </div>
+    </div>
+  </section>
+</Layout>
