@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* Self-hosted, subset to latin, variable weight — two files, ~52KB total,
-   preloaded in the layout. No network font request, no FOIT. */
 @font-face {
   font-family: "Geist";
   src: url("/fonts/geist-latin.woff2") format("woff2");
@@ -25,39 +23,40 @@
   --tx2: hsl(32 8% 38%);
   --tx3: hsl(32 6% 55%);
   --ui1: hsl(38 12% 88%);
-  /* Link accent. blue-300 is unreadable on white (~1.75:1), so light mode
-     gets blue-500 and dark mode gets the blue-300 you actually wanted. */
   --accent: #3b82f6;
-  /* The rail colour, used for 12px dates and for the solid label blocks.
-     blue-500 is only 3.68:1 on white, which is under the bar for small text,
-     so light mode steps to blue-600 (4.6:1). Dark mode gets the blue-300 you
-     actually wanted, which is 9:1 on #121212. */
   --rail-accent: #2563eb;
   --rail-on-accent: #fff;
+
+  --text-body: 0.875rem;
+  --text-meta: 0.75rem;
+
+  --rail-gutter: 2.5rem;
+  --rail-gap: 0.875rem;
+  --page-pad: 1rem;
+  --page-top: 3rem;
+  --head-gap: 2.5rem;
 }
 
-/* Dark mode is the media query, not a class. The OS preference is the only
-   input — there is no toggle — so a class the browser can already express as
-   a media query would need a script to set it, and that script was the only
-   JS on the site. This way the theme also follows a live OS appearance switch
-   with the tab open, which the run-once script never did. */
 @media (prefers-color-scheme: dark) {
   :root {
     --bg1: #121212;
     --bg2: hsl(30 3% 18%);
     --bg3: hsl(30 4% 22%);
+    --tx1: hsl(40 10% 90%);
     --tx2: hsl(36 10% 70%);
     --tx3: hsl(36 8% 56%);
     --ui1: hsl(30 4% 22%);
     --accent: #93c5fd;
     --rail-accent: #93c5fd;
     --rail-on-accent: #121212;
-    /* Halation: at 96% lightness on #121212 the contrast is so extreme that
-       glyph edges bloom into the background and small text reads as if it's
-       vibrating. 90% kills the glow and still leaves ~15:1, three times the
-       4.5:1 requirement — so this costs no legibility. Only --tx1 is held
-       down; the muted tones were never bright enough to bloom. */
-    --tx1: hsl(40 10% 90%);
+  }
+}
+
+@media (min-width: 640px) {
+  :root {
+    --rail-gutter: 4rem;
+    --rail-gap: 1.5rem;
+    --page-pad: 1.5rem;
   }
 }
 
@@ -65,35 +64,11 @@
   --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-bg: var(--bg1);
-  --color-bg2: var(--bg2);
-  --color-bg3: var(--bg3);
-  --color-tx1: var(--tx1);
   --color-tx2: var(--tx2);
-  --color-tx3: var(--tx3);
   --color-ui1: var(--ui1);
-  --color-accent: var(--accent);
-  --color-rail-accent: var(--rail-accent);
-
-  /* Flat scale. Two sizes on the index — that's the whole ladder.
-     Hierarchy comes from weight and from which rail you're in. */
-  --text-body: 0.875rem;
-  --text-body--line-height: 1.55;
-  --text-meta: 0.75rem;
-  --text-meta--line-height: 1.5;
-
-  /* The gutter width, referenced by every row on the page. */
-  --spacing-gutter: 4rem;
-
-  --radius-none: 0px;
 }
 
 @layer base {
-  /* Static, on purpose. This is a policy, not an oversight: the design
-     decision was no motion, and stating it once here means no stray
-     hover transition can creep back in later.
-
-     Nothing on the site is exempt. */
   *,
   *::before,
   *::after {
@@ -103,7 +78,6 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
-    /* No smooth scroll — anchors jump. */
     scroll-behavior: auto;
   }
 
@@ -126,7 +100,6 @@
     }
   }
 
-  /* One focus ring, square like everything else. */
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -142,11 +115,6 @@
     text-decoration: none;
   }
 
-  /* Hover turns a link the accent colour, instantly, no easing.
-     Deliberately NOT applied to the index rows: a title going blue on hover
-     put accent text a few pixels from the accent date in the rail, and two
-     blues that close together read as a mistake. Only the footer links and
-     the back link opt in, via data-link. */
   @media (hover: hover) {
     a[data-link]:hover {
       color: var(--accent);
@@ -160,7 +128,6 @@
   }
 }
 
-/* The metadata voice — everything that lives in the left rail. */
 .meta {
   font-family: var(--font-mono);
   font-size: var(--text-meta);
@@ -170,32 +137,10 @@
   letter-spacing: -0.01em;
 }
 
-/* The colour lives in the rail. Dates run blue down the full height of every
-   page, so blue is present wherever you scroll without a single element being
-   added — and it's the structural spine that's carrying it, not decoration
-   sitting on top of the layout. */
 .rail-date {
   color: var(--rail-accent);
 }
 
-/* Inline links in body copy. Deliberately NOT the accent colour: blue belongs
-   to the rail, and a blue link in the NOW paragraph would sit 40px under the
-   blue NOW label — the same two-blues-together problem that took hover
-   highlighting off the index rows.
-   So the affordance is a rule instead, which is the vocabulary this page is
-   already built from: the hairline under the masthead, the stroke down the
-   rail, the border on a table cell. A link is one more 1px line.
-   Colour is --tx3, not --ui1: --ui1 is for structure you shouldn't notice,
-   and a link has to be findable. Hover takes it to full text colour, which is
-   the only state change on the page and costs nothing since it's a colour.
-
-   One rule for both surfaces. A link in a post used to be accent blue while a
-   link on the index was underlined, so the same object looked like two
-   different things depending on which page you were on. Now no link anywhere
-   on the site rests in blue — the only blue left outside the rail is the
-   transient hover on footer and back links, which opt in via [data-link].
-   Underline-only is also the accessible choice: the affordance is never
-   carried by colour alone. */
 .link,
 .prose a {
   text-decoration: underline;
@@ -211,17 +156,8 @@
   }
 }
 
-/* One row of the index. The padding gives the hover fill room to breathe and
-   the matching negative margin cancels it, so the rail still lines up exactly
-   with the section label above it.
-   Only anchors get the fill — the work rows aren't links, and highlighting
-   something you can't click is a lie. */
 .row {
   padding: 0.375rem 0.5rem;
-  /* Inline only. A negative *vertical* margin here silently wins against
-     Tailwind's space-y utilities — they're wrapped in :where(), so their
-     specificity is 0 — and the row gaps collapse. Vertical rhythm stays with
-     the utility; this just lets the fill bleed sideways past the text. */
   margin-inline: -0.5rem;
 }
 
@@ -231,21 +167,9 @@
   }
 }
 
-/* Section labels invert: solid blue block, background-coloured text. One hard
-   rectangle per section, no radius, no gradient. This is the pop. */
 .rail-label {
   display: inline-block;
-  /* Grid blockifies inline-block and stretches it to the column, which locked
-     this box to the gutter width — 40px on mobile, 64px on desktop — while
-     "WRITING" needs 54px and "PROJECTS" needs ~68px. The background stopped at
-     the box edge, so the labels were being visibly cut off at both sizes.
-     `start` lets the box size to its text. */
   justify-self: start;
-  /* The rail stroke is an absolutely-positioned ::before, so it paints above
-     in-flow content and drew a line straight through the label. Making the
-     label positioned too puts it later in paint order, so the block sits on
-     top and cleanly interrupts the stroke — which is what a section marker
-     on a ruler should do. */
   position: relative;
   background: var(--rail-accent);
   color: var(--rail-on-accent);
@@ -253,55 +177,18 @@
   text-transform: uppercase;
 }
 
-/* Every row on the page shares this grid: rail on the left, one reading
-   column on the right. Children alternate rail cell / content cell, so
-   section labels and dates sit in the same rail without nesting grids —
-   which is what broke my first attempt at this. */
 .rail {
   display: grid;
   grid-template-columns: var(--rail-gutter) minmax(0, 1fr);
   column-gap: var(--rail-gap);
 }
 
-/* The rail narrows on small screens instead of collapsing. Stacking the
-   metadata above each row would destroy the single vertical edge that is
-   the entire design, and "2026" needs very little room. */
-:root {
-  --rail-gutter: 2.5rem;
-  --rail-gap: 0.875rem;
-  --page-pad: 1rem;
-  /* Page top margin, and the gap between the masthead rule and a post title.
-     Both live here because the rail stroke has to measure itself against
-     them — see .rail-seg. */
-  --page-top: 3rem;
-  --head-gap: 2.5rem;
-}
-@media (min-width: 640px) {
-  :root {
-    --rail-gutter: var(--spacing-gutter);
-    --rail-gap: 1.5rem;
-    --page-pad: 1.5rem;
-  }
-}
-
-
-/* The rail, made continuous.
-   One hairline down the channel between the gutter and the text column,
-   running the full height of the page — so the spine exists beside the name
-   and the footer, not only beside the dated rows. Padding comes from the same
-   variable the line is positioned with, so the two can never drift apart. */
 .page {
   position: relative;
   padding-inline: var(--page-pad);
   padding-top: var(--page-top);
 }
 
-/* The line's job is to bind many dated rows into one ledger, which is an
-   index problem. A post has a single date in the rail, so the stroke has less
-   work to do there — but removing it outright makes arriving from the index
-   feel like something broke. Reading pages get all three treatments behind a
-   data attribute so the choice can be made by looking. The index is always
-   full and is deliberately not affected by the picker. */
 .page-rail::before {
   content: "";
   position: absolute;
@@ -312,15 +199,6 @@
   background: var(--ui1);
 }
 
-/* HEAD — the reading-page treatment.
-   The stroke spans the masthead and the post title, then stops dead where
-   prose begins: continuity when you arrive from the index, no vertical edge
-   sitting beside 2,000 words.
-   Drawn as two segments that meet exactly, rather than one stroke cut at a
-   guessed height. Each segment reaches up by the exact gap above it — the
-   masthead by the page's top padding, the title by the gap under the
-   masthead rule — so the join is seamless and the stroke ends at the real
-   bottom of the title however many lines it wraps to. */
 .rail-seg {
   position: relative;
 }
@@ -335,11 +213,6 @@
   background: var(--ui1);
 }
 
-/* Reading surface, on the index's type scale rather than its own.
-   One ladder for the whole site: 24 title / 16 heading / 14 body / 12 meta.
-   Leading is 1.6 rather than the index's 1.55 — the only concession, because
-   a long column at 14px/1.55 is genuinely hard to hold your place in, and
-   line-height doesn't change the size match at all. */
 .prose {
   font-size: 1rem;
   line-height: 1.6;
@@ -376,7 +249,6 @@
   color: var(--tx1);
   font-weight: 600;
 }
-/* .prose a is styled up with .link — one rule, both surfaces. */
 .prose ul,
 .prose ol {
   padding-left: 1.25rem;
@@ -433,7 +305,6 @@
   overflow-y: hidden;
 }
 
-/* Shiki dark variant */
 @media (prefers-color-scheme: dark) {
   .astro-code,
   .astro-code span {

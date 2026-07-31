@@ -5,8 +5,6 @@ export interface Project {
   year: number;
 }
 
-// Curated, not complete. Four things that clear both bars: you built the
-// hard part, and someone used it.
 export const projects: Project[] = [
   {
     name: "courseflow",

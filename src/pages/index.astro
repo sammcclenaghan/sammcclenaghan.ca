@@ -3,47 +3,24 @@ import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { projects } from "../data/projects";
 
-// Everything on one page. No /writing index, no /projects index — the only
-// other pages that exist are the posts themselves.
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 
-// One line per role. Company and title only prove a job was held, not that it
-// went well, and this is the section a recruiter actually reads.
-//
-// Each note sits at a deliberate altitude. Three were available: the ticket
-// ("rebuilt the Dropbox integration and job progress tracking on a Rails
-// monolith"), the company ("a self-publishing platform for authors"), and the
-// thing Sam owned. These are the third — he stays the subject of the sentence,
-// but the implementation nouns go. AWS, Rails, Vue 3 and delta storage all live
-// on the resume, which is one click away in the footer; the page shouldn't read
-// as a worse copy of it.
-//
-// Rhythm borrowed from nexxel.dev: verb first, no throat-clearing, ~9 words.
-// Present tense for the live role and past for the finished ones, so the
-// current job reads as current without the date having to carry it alone.
 const work = [
   {
     company: "Vertical City",
     role: "Software Engineer Intern",
     years: "2026 —",
-    // "off a paid vendor" is the only business outcome in the section — the
-    // company stopped renting a capability — so it survives the cut that
-    // dropped AWS and the word "pipeline".
     note: "Bringing video ad processing in-house, off a paid vendor.",
   },
   {
     company: "Leanpub",
     role: "Full Stack Developer Intern",
     years: "2025",
-    // "follow long-running jobs" is the point of the work, not the job queue
-    // that implemented it: authors could finally see what was happening.
     note: "Rebuilt how authors sync files and follow long-running jobs.",
   },
   {
-    // Two words. Their own site is "Trust Science" — same correction as
-    // VikeLabs, taken from the source rather than guessed.
     company: "Trust Science",
     role: "Application & APIs Developer Intern",
     years: "2024",
@@ -59,35 +36,15 @@ const work = [
 ---
 
 <Layout>
-  <!-- Below the rule, not above it: the name is the masthead and the rule
-       closes it, so the description reads as the first piece of content rather
-       than part of the letterhead.
-       The -16px pulls it to 24px under the rule against 56px below, so it
-       clearly attaches upward instead of floating between two sections — it
-       sat at 40/56 before, near-symmetrical, which grouped it with nothing.
-       Done here rather than on main's padding because posts need that value
-       to stay at --head-gap: the rail stroke segments measure against it. -->
-  <!-- Labelled like every other section. It was the one block on the page with
-       an empty gutter cell, on a page where the gutter always carries a marker
-       — so it read as an orphan regardless of its size. With a label the index
-       is four consistent sections: now / writing / projects / work. -->
   <section id="about" class="-mt-4 space-y-2 pb-14">
     <div class="rail">
       <h2 class="meta rail-label">now</h2>
       <span aria-hidden="true"></span>
     </div>
 
-    <!-- Body size and body leading, inherited — no overrides. Now that the
-         section carries a label like every other one, it doesn't need type
-         size to mark itself out as different. -->
     <div class="rail">
       <span aria-hidden="true"></span>
       <div class="max-w-[34rem] space-y-3">
-        <!-- Two links, not three. The rule is "link the things you do, not the
-             things you are": VikeLabs is the one name here a reader won't
-             recognise and Vertical City is the one a recruiter will open, while
-             the University of Victoria is a credential nobody clicks. A third
-             link would put three interruptions in a 34-word sentence. -->
         <p>
           I'm a computer science student at the University of Victoria, where
           I'm the director of projects at <a
@@ -111,10 +68,6 @@ const work = [
     </div>
   </section>
 
-  <!-- Each row is one <a> that is itself the rail grid, so the date and the
-       text are inside a single hover target and a single click target. They
-       used to be two loose cells in the section's grid, which meant only the
-       title was clickable and nothing could highlight the row as a whole. -->
   <section id="writing" class="space-y-2 pb-14">
     <div class="rail">
       <h2 class="meta rail-label">writing</h2>

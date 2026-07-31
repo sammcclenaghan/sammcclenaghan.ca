@@ -4,19 +4,8 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
-  /** Loads KaTeX stylesheet only on pages that actually contain math. */
   math?: boolean;
-  /** Draws the rule under the name. The index turns this off because its
-      lede carries the rule instead — name and lede read as one block there,
-      which is the whole point. */
-  divider?: boolean;
-  /** Draws the continuous rail stroke. */
-  rail?: boolean;
-  /** Reading surface: the rail stroke spans the masthead and title only
-      (see .rail-seg) instead of running the whole page. */
   reading?: boolean;
-  /** Publish date. Presence is what marks a page as a post: it flips og:type
-      to "article" and emits BlogPosting JSON-LD instead of the index's Person. */
   published?: Date;
 }
 
@@ -24,8 +13,6 @@ const {
   title,
   description = "Sam McClenaghan — computer science at the University of Victoria. Writing about things I've built and what building them taught me.",
   math = false,
-  divider = true,
-  rail = true,
   reading = false,
   published,
 } = Astro.props;
@@ -33,20 +20,9 @@ const {
 const siteName = "Sam McClenaghan";
 const pageTitle = title ? `${title} — ${siteName}` : siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-
-// The name is the page's heading on the index, where nothing else outranks it,
-// and a plain span on a post, where the article title is the h1. Rendering it
-// as an h2 everywhere left the index with no h1 at all and made every post's
-// outline open at h2 and then jump backwards to h1.
+const ogImage = new URL("og.png", Astro.site);
 const Masthead = title ? "span" : "h1";
 
-// Absolute, and it has to be: every scraper requires a fully-qualified URL for
-// og:image and silently shows nothing for a root-relative one.
-const ogImage = new URL("og.png", Astro.site);
-
-// One JSON-LD block per page: BlogPosting on posts, Person everywhere else.
-// Person carries sameAs so a name search can tie the site to the GitHub and
-// LinkedIn profiles — that link is the whole reason the block exists.
 const person = {
   "@type": "Person",
   name: siteName,
@@ -68,17 +44,6 @@ const jsonLd = published
     }
   : { "@context": "https://schema.org", ...person };
 
-// No nav. One page has nowhere to navigate to, and everything that isn't
-// this page is off-site — which belongs at the bottom, after the content,
-// not above it competing for the first thing you see.
-// Four labels, all one word. The address used to be its own label, which made
-// it the longest item in the row and the only one that wasn't a noun for a
-// destination — "email" matches github / resume / linkedin. The mailto is
-// unchanged, so the address is still one click away.
-//
-// No rss link. The feed itself still builds and is still announced in <head>
-// via <link rel="alternate">, which is how readers actually subscribe — so
-// removing the visible link costs nothing and breaks nobody.
 const links = [
   { href: "https://github.com/sammcclenaghan", label: "github" },
   { href: "/resume.pdf", label: "resume" },
@@ -102,9 +67,6 @@ const links = [
       title={siteName}
       href={new URL("rss.xml", Astro.site)}
     />
-    <!-- Two static tags instead of one JS-managed one. The media attribute
-         lets the browser pick, which also tracks a live OS appearance switch —
-         the old run-once script set the colour at load and never again. -->
     <meta
       name="theme-color"
       content="#ffffff"
@@ -116,8 +78,6 @@ const links = [
       media="(prefers-color-scheme: dark)"
     />
 
-    <!-- Fonts are the only blocking asset. Preloaded so they land with the
-         first paint instead of swapping in after it. -->
     <link
       rel="preload"
       href="/fonts/geist-latin.woff2"
@@ -134,13 +94,6 @@ const links = [
     />
     {math && <link rel="stylesheet" href="/katex.min.css" />}
 
-    <!-- Without og:image every share — LinkedIn, Slack, iMessage, Twitter —
-         renders as a bare text row with no card, which reads as a broken link
-         rather than a restrained one. The card is the site's own dark mode: blue
-         label block, rail, real Geist. Source kept at src/og-card.html; re-render
-         with the command in that file's comment if the name or line changes.
-         summary_large_image is what makes Twitter use the wide card instead of
-         cropping to a small square thumbnail. -->
     <meta property="og:type" content={published ? "article" : "website"} />
     {
       published && (
@@ -164,33 +117,18 @@ const links = [
     <meta name="twitter:image" content={ogImage} />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-
-    <!-- No scripts. The theme script that lived here set a .dark class from
-         the OS preference — but with no toggle, the class was just a media
-         query with a JS middleman, so the stylesheet now asks
-         prefers-color-scheme directly and the site ships zero JS. -->
   </head>
 
   <body>
-    <!-- Top margin matches the page's internal section rhythm (48px). Outer
-         spacing tighter than inner spacing always reads as cramped.
-         `.page` owns the horizontal padding and draws the continuous rail. -->
     <div
       class:list={[
         "page mx-auto max-w-[44rem] pb-8",
-        !reading && rail && "page-rail",
+        !reading && "page-rail",
       ]}
     >
-      <!-- Just the name. No mark, no nav, no band.
-           24px, which abandons the flat two-size scale on purpose: 16px
-           semibold was tried and it read as timid rather than restrained. A
-           page needs a face. Tracking goes negative as the size grows —
-           large type reads too loose at the tracking small type needs — and
-           leading tightens to match. -->
       <header
         class:list={[
-          "rail",
-          divider && "border-b border-ui1 pb-3",
+          "rail border-b border-ui1 pb-3",
           reading && "rail-seg",
         ]}
         style={reading ? "--seg-top: var(--page-top)" : undefined}
@@ -205,16 +143,10 @@ const links = [
         </a>
       </header>
 
-      <!-- 20px, deliberately not 12px. The lede's own paragraphs sit 12px
-           apart, so matching that made the name read as another line of the
-           paragraph instead of the head of the block. Distinct levels need
-           distinct gaps — but still well under the 48px that separates
-           blocks, so name and lede stay one unit. -->
-      <main class:list={[divider ? "pt-[var(--head-gap)]" : "pt-6"]}>
+      <main class="pt-[var(--head-gap)]">
         <slot />
       </main>
 
-      <!-- Everything that used to be a navbar, moved below the content. -->
       <footer class="rail border-t border-ui1 mt-16 pt-3">
         <span aria-hidden="true"></span>
         <div class="meta flex flex-wrap gap-x-4 gap-y-1">
