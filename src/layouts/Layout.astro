@@ -102,7 +102,19 @@ const links = [
       title={siteName}
       href={new URL("rss.xml", Astro.site)}
     />
-    <meta name="theme-color" content="#ffffff" />
+    <!-- Two static tags instead of one JS-managed one. The media attribute
+         lets the browser pick, which also tracks a live OS appearance switch —
+         the old run-once script set the colour at load and never again. -->
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#121212"
+      media="(prefers-color-scheme: dark)"
+    />
 
     <!-- Fonts are the only blocking asset. Preloaded so they land with the
          first paint instead of swapping in after it. -->
@@ -153,22 +165,10 @@ const links = [
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <!-- The only script on the site. Runs before paint so there's no flash of
-         the wrong theme.
-         The localStorage read is gone along with the theme button: nothing
-         writes that key any more, so keeping the read would have pinned anyone
-         who had ever pressed the old toggle to that choice permanently, with no
-         control left to change it back. The OS preference is now the only
-         input, which is also the answer most people want. -->
-    <script is:inline>
-      (() => {
-        const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-        document.documentElement.classList.toggle("dark", dark);
-        document
-          .querySelector('meta[name="theme-color"]')
-          ?.setAttribute("content", dark ? "#121212" : "#ffffff");
-      })();
-    </script>
+    <!-- No scripts. The theme script that lived here set a .dark class from
+         the OS preference — but with no toggle, the class was just a media
+         query with a JS middleman, so the stylesheet now asks
+         prefers-color-scheme directly and the site ships zero JS. -->
   </head>
 
   <body>
