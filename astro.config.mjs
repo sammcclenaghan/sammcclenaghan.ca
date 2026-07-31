@@ -2,14 +2,18 @@
 import { defineConfig } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
 import tailwindcss from "@tailwindcss/vite";
+import sitemap from "@astrojs/sitemap";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
-// Deliberately bare. No sitemap, no image service, no client router, no font
+// Deliberately bare. No image service config, no client router, no font
 // integration — every one of those adds either client JS or build weight, and
-// this site is a static index plus some markdown.
+// this site is a static index plus some markdown. The sitemap is the one
+// integration that clears the bar: it emits two XML files at build time and
+// ships nothing to the client. robots.txt points crawlers at it.
 export default defineConfig({
   site: "https://smccl.ca/",
+  integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
   },

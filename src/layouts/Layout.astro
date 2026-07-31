@@ -15,6 +15,9 @@ interface Props {
   /** Reading surface: the rail stroke spans the masthead and title only
       (see .rail-seg) instead of running the whole page. */
   reading?: boolean;
+  /** Publish date. Presence is what marks a page as a post: it flips og:type
+      to "article" and emits BlogPosting JSON-LD instead of the index's Person. */
+  published?: Date;
 }
 
 const {
@@ -24,6 +27,7 @@ const {
   divider = true,
   rail = true,
   reading = false,
+  published,
 } = Astro.props;
 
 const siteName = "Sam McClenaghan";
@@ -39,6 +43,30 @@ const Masthead = title ? "span" : "h1";
 // Absolute, and it has to be: every scraper requires a fully-qualified URL for
 // og:image and silently shows nothing for a root-relative one.
 const ogImage = new URL("og.png", Astro.site);
+
+// One JSON-LD block per page: BlogPosting on posts, Person everywhere else.
+// Person carries sameAs so a name search can tie the site to the GitHub and
+// LinkedIn profiles — that link is the whole reason the block exists.
+const person = {
+  "@type": "Person",
+  name: siteName,
+  url: Astro.site?.href,
+  sameAs: [
+    "https://github.com/sammcclenaghan",
+    "https://www.linkedin.com/in/sam-mcclenaghan",
+  ],
+};
+const jsonLd = published
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: title,
+      description,
+      datePublished: published.toISOString().slice(0, 10),
+      url: canonical.href,
+      author: person,
+    }
+  : { "@context": "https://schema.org", ...person };
 
 // No nav. One page has nowhere to navigate to, and everything that isn't
 // this page is off-site — which belongs at the bottom, after the content,
@@ -101,7 +129,15 @@ const links = [
          with the command in that file's comment if the name or line changes.
          summary_large_image is what makes Twitter use the wide card instead of
          cropping to a small square thumbnail. -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={published ? "article" : "website"} />
+    {
+      published && (
+        <meta
+          property="article:published_time"
+          content={published.toISOString().slice(0, 10)}
+        />
+      )
+    }
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -114,6 +150,8 @@ const links = [
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- The only script on the site. Runs before paint so there's no flash of
          the wrong theme.
