@@ -1,0 +1,15 @@
+---
+title: "A Return To Weblogging"
+description: "The word blog came from weblog — a log of what you're working on, thinking about, and reading. I'm going back to that."
+date: 2026-07-31
+---
+
+Have you ever stumbled upon a blog and realized it's everything you've been missing in life? Just the other day, I came across [Peter Zhu's blog](https://blog.peterzhu.ca). He's a Ruby Core Committer and a staff engineer at Shopify. Immediately a sense of euphoria washed over me as I saw post after post about Ruby internals, garbage collection and performance: exactly the kind of thing I love to read on a Saturday morning!
+
+The word "blog" comes from "weblog". Back in the late 90s, Jorn Barger launched a section of his website titled "The Robot Wisdom Weblog." Really all it was was links to areas around the web that he had found, with bits of commentary for each link. Then the personal blog emerged, trading curated links for more personal entries, more akin to a diary. But at all of these moments, blogging wasn't content or a publication, it was just a personal log of what someone was up to.
+
+I feel as though now blogs are something that need to be highly edited and professionalized, a way of writing I've never subscribed to. I think many can agree with me, you've all seen it, how many personal websites have that inevitable blog link in their nav, and after clicking it you find it empty. I always wonder why people put a blog link and then proceed to never write one. Are they self conscious of their writing style, or think they really have nothing to say? I get it. I struggle with writing blogs too, at least the kind that I enjoy reading.
+
+I'm in my third year of university, I don't have anything to give that people would find interesting. I understand that most of what I say just goes out into the ether, but granted that's the same as what I do everyday. Why should I write these ultra published blog articles on niche topics that even I have to learn about in order to feel like something is worth publishing? I feel like that defeats the purpose of a blog. As a student, and someone who's 20 years old, I am always learning, but I feel uncomfortable parroting that knowledge through a blog writing as if I already knew it. I've decided that for me personally, a blog should be putting to light things I've been working on. It's up to others whether they'd like to read it, no promises you will even get anything out of it. But I've come to believe that everybody should post about what they've been working on, and if doing so, they would come to realize that it's not necessarily what they're doing that's interesting, it's how they go about it. In this day and age if I want to follow a bland tutorial, I can go to AI and have a detailed conversation about the same topic. However, it's the human aspect that makes blogs worth reading, understanding how humans approach problems and writing about them.
+
+So, this is me publishing more. Blogs, TILs, notes, essays, honestly just whatever I want. Just logging what I'm doing on the web. That was always the point.
