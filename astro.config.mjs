@@ -8,6 +8,7 @@ import rehypeKatex from "rehype-katex";
 
 export default defineConfig({
   site: "https://smccl.ca/",
+  prefetch: true,
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],

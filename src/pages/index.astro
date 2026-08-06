@@ -76,7 +76,11 @@ const work = [
 
     {
       posts.map((post) => (
-        <a href={`/writing/${post.id}`} class="rail row">
+        <a
+          href={`/writing/${post.id}`}
+          data-astro-prefetch="load"
+          class="rail row"
+        >
           <time
             class="meta rail-date pt-px"
             datetime={post.data.date.toISOString().slice(0, 10)}
